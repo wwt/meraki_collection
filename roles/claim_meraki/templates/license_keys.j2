@@ -1,0 +1,8 @@
+[
+    {% for license_key in license_keys %}
+        {
+            "key": "{{ license_key.key }}",
+            "mode": "{{ license_key.mode }}"       
+        }
+    {% endfor %}
+]

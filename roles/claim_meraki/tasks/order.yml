@@ -1,0 +1,14 @@
+---
+- name: Register Meraki Device by Order Number
+  ansible.builtin.uri:
+    url: "{{ dashboard_base_url }}/organizations/{{ org_id }}/claim"
+    method: POST
+    status_code: 200
+    body: |
+      {
+        "orders": {{ order_ids }}
+      }
+    body_format: json
+    headers:
+      Content-Type: application/json
+      X-Cisco-Meraki-API-Key: "{{ auth_key }}"
