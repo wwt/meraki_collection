@@ -16,8 +16,8 @@ readme: README.md
 # A list of the collection's content authors. Can be just the name or in the format 'Full Name <email> (url)
 # @nicks:irc/im.site#channel'
 authors:
-- Jeff Andiorio
-- Nick Thompson
+- Jeff Andiorio <jeff.andiorio@wwt.com> (https://github.com/jandiorio)
+- Nick Thompson <nick.thompson@wwt.com> (https://github.com/nsthompson)
 
 
 ### OPTIONAL but strongly recommended
