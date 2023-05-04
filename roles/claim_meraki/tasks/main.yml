@@ -31,7 +31,7 @@
   ansible.builtin.import_tasks: license_renewal.yml
   vars:
     org_id: "{{ org_results.data.id }}"
-    when: reg_type == "license_renewal" and license_keys is defined
+  when: reg_type == "license_renewal" and license_keys is defined
 
 - name: Claim by Serial Number
   ansible.builtin.import_tasks: device.yml
