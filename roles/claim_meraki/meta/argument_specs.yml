@@ -1,6 +1,6 @@
 ---
 argument_specs:
-  # roles/ansible-meraki-claim/main.yml entry point
+  # roles/claim_meraki/main.yml entry point
   main:
     short_description: Role to claim meraki devices by order, serial, or license
     author: Nick Thompson <github/@nsthompson>
@@ -24,6 +24,7 @@ argument_specs:
         choices:
           - device
           - license_key
+          - license_renewal
           - order
       order_ids:
         type: list

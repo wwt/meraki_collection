@@ -1,14 +1,18 @@
 ---
-- name: Register Meraki Device by License Keys
+- name: Renew Meraki License Key
   ansible.builtin.uri:
     url: "{{ dashboard_base_url }}/organizations/{{ org_id }}/claim"
     method: POST
     status_code: 200
     body: |
       {
-        "licenses": {{ lookup('template', 'templates/add_license_keys.j2') }}
+        "licenses": {
+            "key": "{{ item }}",
+            "mode": "renew"
+            }
       }
     body_format: json
     headers:
       Content-Type: application/json
       X-Cisco-Meraki-API-Key: "{{ auth_key }}"
+  loop: "{{ license_keys }}"
