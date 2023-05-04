@@ -6,10 +6,12 @@
     status_code: 200
     body: |
       {
-        "licenses": {
+        "licenses": [
+          {
             "key": "{{ item }}",
             "mode": "renew"
-            }
+          }
+        ]
       }
     body_format: json
     headers:
