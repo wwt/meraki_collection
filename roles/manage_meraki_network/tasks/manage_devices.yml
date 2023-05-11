@@ -19,7 +19,8 @@
     net_name: "{{ network.name }}"
     name: "{{ device.name }}"
     serial: "{{ device.serial }}"
-    address: "{{ network.address }}"
+    address: "{{ network.address | default(omit) }}"
+    move_map_marker: "{{ 'true' if network.address | default(omit) }}"
     state: "{{ device.state }}"
   loop: "{{ network.devices }}"
   loop_control:
