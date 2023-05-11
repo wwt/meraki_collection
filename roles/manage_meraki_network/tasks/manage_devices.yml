@@ -1,0 +1,13 @@
+---
+- name: Manage Network Devices
+  cisco.meraki.meraki_device:
+    auth_key: "{{ auth_key }}"
+    org_name: "{{ network.organization }}"
+    net_name: "{{ network.name }}"
+    name: "{{ device.name }}"
+    serial: "{{ device.serial }}"
+    address: "{{ network.address }}"
+    state: "{{ device.state }}"
+  loop: "{{ network.devices }}"
+  loop_control:
+    loop_var: device
