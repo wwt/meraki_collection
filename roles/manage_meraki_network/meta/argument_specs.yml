@@ -13,6 +13,7 @@ argument_specs:
         type: list
         required: true
         description: Meraki network definitions
+        elements: dict
         options:
           name:
             type: str
@@ -51,10 +52,15 @@ argument_specs:
             type: str
             required: false
             description: Meraki Dashboard Tags (CSV list)
+          address:
+            type: str
+            required: false
+            description: Device Address
           devices:
             type: list
             required: true
             description: Meraki Devices to add to Network
+            elements: dict
             options:
               name:
                 required: true
