@@ -1,0 +1,72 @@
+---
+argument_specs:
+  # roles/configure_meraki_mx/main.yml entry point
+  main:
+    short_description: Role to configure Meraki MX Appliances
+    author: Nick Thompson <github/@nsthompson>
+    options:
+      auth_key:
+        type: str
+        required: true
+        description: Meraki API Auth Key
+      meraki_mx_configuration:
+        type: dict
+        required: true
+        options:
+          appliances:
+            type: list
+            required: true
+            description: Meraki MX Appliances being Configured
+            elements: dict
+            options:
+              name:
+                type: str
+                required: true
+                description: Name of MX Appliance
+              organization:
+                type: str
+                required: true
+                description: Meraki Organization
+              network:
+                type: str
+                required: true
+                description: Meraki Network Name
+              deployment_settings:
+                type: dict
+                required: true
+                options:
+                  deployment_mode:
+                    type: str
+                    required: true
+                    description: Appliance Deployment Mode
+                    choices:
+                      - routed
+                      - passthrough
+                  client_tracking:
+                    type: str
+                    required: true
+                    description: Meraki Client Tracking Method
+                    choices:
+                      - MAC address
+                      - IP address
+                      - Unique client identifier
+                  dynamic_dns:
+                    type: dict
+                    required: true
+                    options:
+                      prefix:
+                        type: str
+                        required: false
+                        description: Dynamic DNS Prefix
+                      enabled:
+                        type: bool
+                        required: false
+                        description: Dynamic DNS enabled
+              lan_settings:
+                type: dict
+                required: true
+                options:
+                  enable_vlans:
+                    type: bool
+                    required: true
+                    description: Enable VLAN Mode

@@ -1,0 +1,51 @@
+---
+#
+# Ansible Role to Configure Meraki MX Appliances
+#
+# Copyright (C) 2023 World Wide Technology
+# All Rights Reserved
+#
+# Written by: Nick Thompson (github/@nsthompson)
+#
+- name: Get Meraki Network IDs
+  cisco.meraki.meraki_network:
+    auth_key: "{{ auth_key }}"
+    org_name: "{{ appliance.organization }}"
+    net_name: "{{ appliance.network }}"
+    state: query
+  loop: "{{ meraki_mx_configuration.appliances }}"
+  loop_control:
+    loop_var: appliance
+  register: network_results
+
+- name: Build dict of Network Name to IDs
+  ansible.builtin.set_fact:
+    network_ids: '{{ network_ids|default({}) | combine(
+      {
+        result.data.name: {
+          "network_id": result.data.id,
+        }
+      }
+      ) }}'
+  loop: "{{ network_results.results }}"
+  loop_control:
+    loop_var: result
+
+- name: Configure Meraki MX Deployment Settings
+  ansible.builtin.include_tasks: configure_deployment.yml
+  vars:
+    network_id: "{{ network_ids[appliance.network]['network_id'] }}"
+  loop: "{{ meraki_mx_configuration.appliances }}"
+  loop_control:
+    loop_var: appliance
+
+- name: Configure Meraki MX Network VLAN Settings
+  cisco.meraki.meraki_mx_network_vlan_settings:
+    auth_key: "{{ auth_key }}"
+    org_name: "{{ appliance.organization }}"
+    net_name: "{{ appliance.network }}"
+    vlans_enabled: "{{ appliance.lan_settings.enable_vlans }}"
+    state: present
+  loop: "{{ meraki_mx_configuration.appliances }}"
+  loop_control:
+    loop_var: appliance
