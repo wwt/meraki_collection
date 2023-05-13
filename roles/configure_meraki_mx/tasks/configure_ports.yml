@@ -1,31 +1,16 @@
 ---
-- name: Configure Meraki MX Ports
-  block:
-    - name: "Configure MX Ports for {{ appliance.name }}"
-      ansible.builtin.uri:
-        url: "{{ dashboard_base_url }}/networks/{{ network_id }}/appliance/ports/{{ port.id }}"
-        method: PUT
-        status_code: 200
-        headers:
-          Content-Type: application/json
-          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
-        body_format: json
-        body:
-          enabled: "{{ port.enabled }}"
-          dropUntaggedTraffic: "{{ port.drop_untagged_traffic | default(omit) }}"
-          type: "{{ port.type | default(omit) }}"
-          vlan: "{{ port.vlan | default(omit) }}"
-          allowedVlans: "{{ port.allowed_vlans | default(omit) }}"
-          accessPolicy: "{{ port.access_policy | default(omit) }}"
-      changed_when: api_result.status == 200
-      until: api_result.status != 429
-      delay: 5
-      retries: 3
-      register: api_result
-      loop: "{{ appliance.ports }}"
-      loop_control:
-        loop_var: port
-  rescue:
-    - name: Something went wrong...
-      ansible.builtin.debug:
-        msg: "ERROR: {{ api_result }}"
+- name: "Configure Meraki MX Ports for {{ appliance.name }}"
+  cisco.meraki.meraki_mx_l2_interface:
+    auth_key: "{{ auth_key }}"
+    org_name: "{{ appliance.organization }}"
+    net_name: "{{ appliance.network }}"
+    number: "{{ port.id }}"
+    enabled: "{{ port.enabled }}"
+    drop_untagged_traffic: "{{ port.drop_untagged_traffic | default(omit) }}"
+    port_type: "{{ port.type | default(omit) }}"
+    vlan: "{{ port.vlan | default(omit) }}"
+    allowed_vlans: "{{ port.allowed_vlans | default(omit) }}"
+    access_policy: "{{ port.access_policy | default(omit) }}"
+  loop: "{{ appliance.ports }}"
+  loop_control:
+    loop_var: port
