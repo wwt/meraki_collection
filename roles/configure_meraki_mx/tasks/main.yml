@@ -49,3 +49,17 @@
   loop: "{{ meraki_mx_configuration.appliances }}"
   loop_control:
     loop_var: appliance
+
+- name: Configure Meraki MX VLANs
+  ansible.builtin.include_tasks: configure_vlans.yml
+  loop: "{{ meraki_mx_configuration.appliances }}"
+  loop_control:
+    loop_var: appliance
+
+- name: Configure Meraki MX Ports
+  ansible.builtin.include_tasks: configure_ports.yml
+  vars:
+    network_id: "{{ network_ids[appliance.network]['network_id'] }}"
+  loop: "{{ meraki_mx_configuration.appliances }}"
+  loop_control:
+    loop_var: appliance

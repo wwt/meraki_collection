@@ -1,0 +1,17 @@
+---
+- name: "Configure MX VLANs for {{ appliance.name }}"
+  cisco.meraki.meraki_mx_vlan:
+    auth_key: "{{ auth_key }}"
+    org_name: "{{ appliance.organization }}"
+    net_name: "{{ appliance.network }}"
+    state: "{{ vlan.state }}"
+    vlan_id: "{{ vlan.id }}"
+    name: "{{ vlan.name | default(omit) }}"
+    subnet: "{{ vlan.subnet | default(omit) }}"
+    appliance_ip: "{{ vlan.appliance_ip | default(omit) }}"
+    reserved_ip_range: "{{ vlan.reserved_ip_range | default(omit) }}"
+    fixed_ip_assignments: "{{ vlan.fixed_ip_assignments | default(omit) }}"
+    dns_nameservers: "{{ vlan.dns_nameservers | default(omit) }}"
+  loop: "{{ appliance.vlans }}"
+  loop_control:
+    loop_var: vlan

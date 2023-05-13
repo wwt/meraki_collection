@@ -1,14 +1,23 @@
 ---
-- name: Register Meraki Device by License Keys
-  ansible.builtin.uri:
-    url: "{{ dashboard_base_url }}/organizations/{{ org_id }}/claim"
-    method: POST
-    status_code: 200
-    body: |
-      {
-        "licenses": {{ lookup('template', 'templates/add_license_keys.j2') }}
-      }
-    body_format: json
-    headers:
-      Content-Type: application/json
-      X-Cisco-Meraki-API-Key: "{{ auth_key }}"
+- name: Register Meraki Devices
+  block:
+    - name: Registering Meraki Device by License Keys
+      ansible.builtin.uri:
+        url: "{{ dashboard_base_url }}/organizations/{{ org_id }}/claim"
+        method: POST
+        status_code: 200
+        headers:
+          Content-Type: application/json
+          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
+        body_format: json
+        body:
+          licenses: "{{ lookup('template', 'templates/add_license_keys.j2') }}"
+      changed_when: api_result.status == 200
+      until: api_result.status != 429
+      delay: 5
+      retries: 3
+      register: api_result
+  rescue:
+    - name: Something went wrong...
+      ansible.builtin.debug:
+        msg: "ERROR: {{ api_result }}"

@@ -70,3 +70,109 @@ argument_specs:
                     type: bool
                     required: true
                     description: Enable VLAN Mode
+              vlans:
+                type: list
+                required: true
+                elements: dict
+                options:
+                  id:
+                    type: int
+                    required: true
+                    description: VLAN ID
+                  state:
+                    type: str
+                    required: true
+                    description: VLAN State
+                    choices:
+                      - present
+                      - absent
+                  name:
+                    type: str
+                    required: false
+                    description: VLAN Name
+                  subnet:
+                    type: str
+                    required: false
+                    description: Subnet for VLAN
+                  appliance_ip:
+                    type: str
+                    required: false
+                    description: Default Gateway on MX
+                  reserved_ip_range:
+                    type: list
+                    required: false
+                    elements: dict
+                    options:
+                      start:
+                        type: str
+                        required: false
+                        description: Starting IP address
+                      end:
+                        type: str
+                        required: false
+                        description: End IP Address
+                      comment:
+                        type: str
+                        required: false
+                        description: DHCP Comment
+                  fixed_ip_assignments:
+                    type: list
+                    required: false
+                    elements: dict
+                    options:
+                      mac:
+                        type: str
+                        required: false
+                        description: Client MAC Address
+                      ip:
+                        type: str
+                        required: false
+                        description: Client IP Address
+                      name:
+                        type: str
+                        required: false
+                        description: Client Name
+                  dns_nameservers:
+                    type: str
+                    required: false
+                    description: Semi-colon delimited list of DNS IP addresses or opendns, google_dns, upstream_dns
+              ports:
+                type: list
+                required: true
+                elements: dict
+                options:
+                  id:
+                    type: int
+                    required: true
+                    description: Port ID
+                  enabled:
+                    type: bool
+                    required: true
+                  drop_untagged_traffic:
+                    type: bool
+                    required: false
+                    description: Drop Untagged Traffic - Can only be set if port type is trunk
+                  type:
+                    type: str
+                    required: false
+                    description: Port Type
+                    choices:
+                      - access
+                      - trunk
+                  vlan:
+                    type: int
+                    required: false
+                    description: Access VLAN or Trunk Native VLAN
+                  allowed_vlans:
+                    type: str
+                    required: false
+                    description: Comma-separated list of VLAN IDs or all
+                  access_policy:
+                    type: str
+                    required: false
+                    description: Port Access Policy
+                    choices:
+                      - open
+                      - 8021x-radius
+                      - mac-radius
+                      - hybrid-radius

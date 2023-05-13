@@ -1,20 +1,33 @@
 ---
-- name: Renew Meraki License Key
-  ansible.builtin.uri:
-    url: "{{ dashboard_base_url }}/organizations/{{ org_id }}/claim"
-    method: POST
-    status_code: 200
-    body: |
-      {
-        "licenses": [
+- name: Renew Meraki Devices
+  block:
+    - name: Renewing Meraki Device by License Keys
+      ansible.builtin.uri:
+        url: "{{ dashboard_base_url }}/organizations/{{ org_id }}/claim"
+        method: POST
+        status_code: 200
+        headers:
+          Content-Type: application/json
+          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
+        body_format: json
+        body: |
           {
-            "key": "{{ item }}",
-            "mode": "renew"
+            "licenses": [
+              {
+                "key": "{{ license_key }}",
+                "mode": "renew"
+              }
+            ]
           }
-        ]
-      }
-    body_format: json
-    headers:
-      Content-Type: application/json
-      X-Cisco-Meraki-API-Key: "{{ auth_key }}"
-  loop: "{{ license_keys }}"
+      changed_when: api_result.status == 200
+      until: api_result.status != 429
+      delay: 5
+      retries: 3
+      register: api_result
+      loop: "{{ license_keys }}"
+      loop_control:
+        loop_var: license_key
+  rescue:
+    - name: Something went wrong...
+      ansible.builtin.debug:
+        msg: "ERROR: {{ api_result }}"

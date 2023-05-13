@@ -24,4 +24,4 @@
   rescue:
     - name: Something went wrong...
       ansible.builtin.debug:
-        msg: "ERROR: {{ settings_output }}"
+        msg: "ERROR: {{ api_result }}"
