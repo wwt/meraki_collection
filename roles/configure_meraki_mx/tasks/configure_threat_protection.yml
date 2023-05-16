@@ -1,0 +1,35 @@
+---
+- name: Configure Meraki MX Advanced Malware Protection Settings
+  block:
+    - name: "Configure MX Advanced Malware Protection Settings for {{ appliance.name }}"
+      ansible.builtin.uri:
+        url: "{{ dashboard_base_url }}/networks/{{ network_id }}/appliance/security/malware"
+        method: PUT
+        status_code: 200
+        headers:
+          Content-Type: application/json
+          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
+        body_format: json
+        body:
+          mode: "{{ appliance.threat_protection.malware.mode }}"
+          allowedUrls: "{{ appliance.threat_protection.malware.allowed_urls }}"
+          allowedFiles: "{{ appliance.threat_protection.malware.allowed_files | default(omit) }}"
+      changed_when: api_result.status == 200
+      until: api_result.status != 429
+      delay: 5
+      retries: 3
+      register: api_result
+  rescue:
+    - name: Something went wrong...
+      ansible.builtin.debug:
+        msg: "ERROR: {{ api_result }}"
+
+- name: "Configure Meraki MX Intrusion Detection and Prevention Settings for {{ appliance.name }}"
+  cisco.meraki.meraki_intrusion_prevention:
+    auth_key: "{{ auth_key }}"
+    org_name: "{{ appliance.organization }}"
+    net_name: "{{ appliance.network }}"
+    state: "present"
+    mode: "{{ appliance.threat_protection.intrusion.mode }}"
+    ids_rulesets: "{{ appliance.threat_protection.intrusion.rulesets }}"
+    protected_networks: "{{ appliance.threat_protection.intrusion.protected_networks | default(omit) }}"

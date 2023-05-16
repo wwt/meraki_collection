@@ -1,0 +1,150 @@
+{
+    "interfaces": {
+        "wan1": {
+            "enabled": "{{ appliance.wan_interfaces.wan1.enabled }}",
+            {% if appliance.wan_interfaces.wan1.vlan_tagging is defined %}
+            "vlanTagging": {
+                {% if appliance.wan_interfaces.wan1.vlan_tagging.enabled is defined %}
+                "enabled": "{{ appliance.wan_interfaces.wan1.vlan_tagging.enabled }}",
+                {% endif %}
+                {% if appliance.wan_interfaces.wan1.vlan_tagging.vlan_id is defined %}
+                "vlanId": "{{ appliance.wan_interfaces.wan1.vlan_tagging.vlan_id }}"
+                {% endif %}
+            },
+            {% endif %}
+            {% if appliance.wan_interfaces.wan1.svis is defined %}
+            "svis": {
+                {% if appliance.wan_interfaces.wan1.svis.ipv4 is defined %}
+                "ipv4": {
+                    {% if appliance.wan_interfaces.wan1.svis.ipv4.assignment_mode is defined %}
+                    "assignmentMode": "{{ appliance.wan_interfaces.wan1.svis.ipv4.assignment_mode }}",
+                    {% endif %}
+                    {% if appliance.wan_interfaces.wan1.svis.ipv4.address is defined %}
+                    "address": "{{ appliance.wan_interfaces.wan1.svis.ipv4.address }}",
+                    {% endif %}
+                    {% if appliance.wan_interfaces.wan1.svis.ipv4.gateway is defined %}
+                    "gateway": "{{ appliance.wan_interfaces.wan1.svis.ipv4.gateway }}",
+                    {% endif %}
+                    {% if appliance.wan_interfaces.wan1.svis.ipv4.nameservers is defined %}
+                    "nameservers": {
+                        "addresses": {{ appliance.wan_interfaces.wan1.svis.ipv4.nameservers }}
+                    }
+                    {% endif %}
+                },
+                {% endif %}
+                {% if appliance.wan_interfaces.wan1.svis.ipv6 is defined %}
+                "ipv6": {
+                    {% if appliance.wan_interfaces.wan1.svis.ipv6.assignment_mode is defined %}
+                    "assignmentMode": "{{ appliance.wan_interfaces.wan1.svis.ipv6.assignment_mode }}",
+                    {% endif %}
+                    {% if appliance.wan_interfaces.wan1.svis.ipv6.address is defined %}
+                    "address": "{{ appliance.wan_interfaces.wan1.svis.ipv6.address }}",
+                    {% endif %}
+                    {% if appliance.wan_interfaces.wan1.svis.ipv6.gateway is defined %}
+                    "gateway": "{{ appliance.wan_interfaces.wan1.svis.ipv6.gateway }}",
+                    {% endif %}
+                    {% if appliance.wan_interfaces.wan1.svis.ipv6.nameservers is defined %}
+                    "nameservers": {
+                        "addresses": {{ appliance.wan_interfaces.wan1.svis.ipv6.namesevers }}
+                    }
+                    {% endif %}
+                }
+                {% endif %}
+            },
+            {% endif %}
+            {% if appliance.wan_interfaces.wan1.pppoe is defined %}
+            "pppoe": {
+                {% if appliance.wan_interfaces.wan1.pppoe.enabled is defined %}
+                "enabled": "{{ appliance.wan_interfaces.wan1.pppoe.enabled }}",
+                {% endif %}
+                {% if appliance.wan_interfaces.wan1.pppoe.authentication is defined %}
+                "authentication": {
+                    {% if appliance.wan_interfaces.wan1.pppoe.authentication.enabled is defined %}
+                    "enabled": "{{ appliance.wan_interfaces.wan1.pppoe.authentication.enabled }}",
+                    {% endif %}
+                    {% if appliance.wan_interfaces.wan1.pppoe.authentication.username is defined %}
+                    "username": "{{ appliance.wan_interfaces.wan1.pppoe.authentication.username }}",
+                    {% endif %}
+                    {% if appliance.wan_interfaces.wan1.pppoe.authentication.password is defined %}
+                    "password": "{{ appliance.wan_interfaces.wan1.pppoe.authentication.password }}"
+                    {% endif %}
+                }
+                {% endif %}
+            }
+            {% endif %}
+        },
+        "wan2": {
+            "enabled": "{{ appliance.wan_interfaces.wan2.enabled }}",
+            {% if appliance.wan_interfaces.wan2.vlan_tagging is defined %}
+            "vlanTagging": {
+                {% if appliance.wan_interfaces.wan2.vlan_tagging.enabled is defined %}
+                "enabled": "{{ appliance.wan_interfaces.wan2.vlan_tagging.enabled }}",
+                {% endif %}
+                {% if appliance.wan_interfaces.wan2.vlan_tagging.vlan_id is defined %}
+                "vlanId": "{{ appliance.wan_interfaces.wan2.vlan_tagging.vlan_id }}"
+                {% endif %}
+            },
+            {% endif %}
+            {% if appliance.wan_interfaces.wan2.svis is defined %}
+            "svis": {
+                {% if appliance.wan_interfaces.wan2.svis.ipv4 is defined %}
+                "ipv4": {
+                    {% if appliance.wan_interfaces.wan2.svis.ipv4.assignment_mode is defined %}
+                    "assignmentMode": "{{ appliance.wan_interfaces.wan2.svis.ipv4.assignment_mode }}",
+                    {% endif %}
+                    {% if appliance.wan_interfaces.wan2.svis.ipv4.address is defined %}
+                    "address": "{{ appliance.wan_interfaces.wan2.svis.ipv4.address }}",
+                    {% endif %}
+                    {% if appliance.wan_interfaces.wan2.svis.ipv4.gateway is defined %}
+                    "gateway": "{{ appliance.wan_interfaces.wan2.svis.ipv4.gateway }}",
+                    {% endif %}
+                    {% if appliance.wan_interfaces.wan2.svis.ipv4.nameservers is defined %}
+                    "nameservers": {
+                        "addresses": {{ appliance.wan_interfaces.wan2.svis.ipv4.nameservers }}
+                    }
+                    {% endif %}
+                },
+                {% endif %}
+                {% if appliance.wan_interfaces.wan2.svis.ipv6 is defined %}
+                "ipv6": {
+                    {% if appliance.wan_interfaces.wan2.svis.ipv6.assignment_mode is defined %}
+                    "assignmentMode": "{{ appliance.wan_interfaces.wan2.svis.ipv6.assignment_mode }}",
+                    {% endif %}
+                    {% if appliance.wan_interfaces.wan2.svis.ipv6.address is defined %}
+                    "address": "{{ appliance.wan_interfaces.wan2.svis.ipv6.address }}",
+                    {% endif %}
+                    {% if appliance.wan_interfaces.wan2.svis.ipv6.gateway is defined %}
+                    "gateway": "{{ appliance.wan_interfaces.wan2.svis.ipv6.gateway }}",
+                    {% endif %}
+                    {% if appliance.wan_interfaces.wan2.svis.ipv6.nameservers is defined %}
+                    "nameservers": {
+                        "addresses": {{ appliance.wan_interfaces.wan2.svis.ipv6.nameservers }}
+                    }
+                    {% endif %}
+                }
+                {% endif %}
+            },
+            {% endif %}
+            {% if appliance.wan_interfaces.wan2.pppoe is defined %}
+            "pppoe": {
+                {% if appliance.wan_interfaces.wan2.pppoe.enabled is defined %}
+                "enabled": "{{ appliance.wan_interfaces.wan2.pppoe.enabled }}",
+                {% endif %}
+                {% if appliance.wan_interfaces.wan2.pppoe.authentication is defined %}
+                "authentication": {
+                    {% if appliance.wan_interfaces.wan2.pppoe.authentication.enabled is defined %}
+                    "enabled": "{{ appliance.wan_interfaces.wan2.pppoe.authentication.enabled }}",
+                    {% endif %}
+                    {% if appliance.wan_interfaces.wan2.pppoe.authentication.username is defined %}
+                    "username": "{{ appliance.wan_interfaces.wan2.pppoe.authentication.username }}",
+                    {% endif %}
+                    {% if appliance.wan_interfaces.wan2.pppoe.authentication.password is defined %}
+                    "password": "{{ appliance.wan_interfaces.wan2.pppoe.authentication.password }}"
+                    {% endif %}
+                }
+                {% endif %}
+            }
+            {% endif %}
+        }
+    }
+}

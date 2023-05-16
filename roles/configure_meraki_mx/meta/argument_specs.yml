@@ -62,6 +62,208 @@ argument_specs:
                         type: bool
                         required: false
                         description: Dynamic DNS enabled
+              wan_interfaces:
+                type: dict
+                required: true
+                options:
+                  wan1:
+                    type: dict
+                    required: true
+                    description: Configuration for WAN1 Uplink
+                    options:
+                      enabled:
+                        type: bool
+                        required: true
+                        description: Port Enabled
+                      vlan_tagging:
+                        type: dict
+                        required: false
+                        options:
+                          enabled:
+                            type: bool
+                            required: false
+                            description: Enable VLAN Tagging on WAN1
+                          vlan_id:
+                            type: int
+                            required: false
+                            description: VLAN ID for WAN1 if enabled
+                      svis:
+                        type: dict
+                        required: false
+                        options:
+                          ipv4:
+                            type: dict
+                            required: false
+                            description: IPV4 Configuration for WAN1
+                            options:
+                              assignment_mode:
+                                type: str
+                                required: false
+                                description: Interface configuration mode
+                                choices:
+                                  - dynamic
+                                  - static
+                              address:
+                                type: str
+                                required: false
+                                description: interface IP address
+                              gateway:
+                                type: str
+                                required: false
+                                description: interface default gateway
+                              nameservers:
+                                type: list
+                                required: false
+                                elements: str
+                                description: nameserver addresses
+                          ipv6:
+                            type: dict
+                            required: false
+                            description: IPV6 Configuration for WAN1
+                            options:
+                              assignment_mode:
+                                type: str
+                                required: false
+                                description: Interface configuration mode
+                                choices:
+                                  - dynamic
+                                  - static
+                              address:
+                                type: str
+                                required: false
+                                description: interface IPv6 address
+                              gateway:
+                                type: str
+                                required: false
+                                description: interface IPv6 default gateway
+                              nameservers:
+                                type: list
+                                required: false
+                                elements: str
+                                description: IPv6 nameserver addresses
+                      pppoe:
+                        type: dict
+                        required: false
+                        options:
+                          enabled:
+                            type: bool
+                            required: true
+                            description: PPPoE State
+                          authentication:
+                            type: dict
+                            required: false
+                            options:
+                              enabled:
+                                type: bool
+                                required: false
+                                description: PPPoE Auth State
+                              username:
+                                type: str
+                                required: false
+                                description: PPPoE Username
+                              password:
+                                type: str
+                                required: false
+                                description: PPPoE Password
+                  wan2:
+                    type: dict
+                    required: true
+                    description: Configuration for WAN1 Uplink
+                    options:
+                      enabled:
+                        type: bool
+                        required: true
+                        description: Port Enabled
+                      vlan_tagging:
+                        type: dict
+                        required: false
+                        options:
+                          enabled:
+                            type: bool
+                            required: false
+                            description: Enable VLAN Tagging on WAN1
+                          vlan_id:
+                            type: int
+                            required: false
+                            description: VLAN ID for WAN1 if enabled
+                      svis:
+                        type: dict
+                        required: false
+                        options:
+                          ipv4:
+                            type: dict
+                            required: false
+                            description: IPV4 Configuration for WAN1
+                            options:
+                              assignment_mode:
+                                type: str
+                                required: false
+                                description: Interface configuration mode
+                                choices:
+                                  - dynamic
+                                  - static
+                              address:
+                                type: str
+                                required: false
+                                description: interface IP address
+                              gateway:
+                                type: str
+                                required: false
+                                description: interface default gateway
+                              nameservers:
+                                type: list
+                                required: false
+                                elements: str
+                                description: nameserver addresses
+                          ipv6:
+                            type: dict
+                            required: false
+                            description: IPV6 Configuration for WAN1
+                            options:
+                              assignment_mode:
+                                type: str
+                                required: false
+                                description: Interface configuration mode
+                                choices:
+                                  - dynamic
+                                  - static
+                              address:
+                                type: str
+                                required: false
+                                description: interface IPv6 address
+                              gateway:
+                                type: str
+                                required: false
+                                description: interface IPv6 default gateway
+                              nameservers:
+                                type: list
+                                required: false
+                                elements: str
+                                description: IPv6 nameserver addresses
+                      pppoe:
+                        type: dict
+                        required: false
+                        options:
+                          enabled:
+                            type: bool
+                            required: false
+                            description: PPPoE State
+                          authentication:
+                            type: dict
+                            required: false
+                            options:
+                              enabled:
+                                type: bool
+                                required: false
+                                description: PPPoE Auth State
+                              username:
+                                type: str
+                                required: false
+                                description: PPPoE Username
+                              password:
+                                type: str
+                                required: false
+                                description: PPPoE Password
               lan_settings:
                 type: dict
                 required: true
@@ -166,13 +368,95 @@ argument_specs:
                   allowed_vlans:
                     type: str
                     required: false
-                    description: Comma-separated list of VLAN IDs or all
+                    description: Comma-separated list of VLAN IDs used with trunk ports
                   access_policy:
                     type: str
                     required: false
-                    description: Port Access Policy
+                    description: Port Access Policy for access ports
                     choices:
                       - open
                       - 8021x-radius
                       - mac-radius
                       - hybrid-radius
+              threat_protection:
+                type: dict
+                required: false
+                options:
+                  malware:
+                    type: dict
+                    required: false
+                    description: Malware Settings
+                    options:
+                      mode:
+                        type: str
+                        required: false
+                        description: Enable or Disable AMP
+                        choices:
+                          - enabled
+                          - disabled
+                      allowed_urls:
+                        type: list
+                        required: false
+                        elements: dict
+                        description: List of Whitelisted URLs
+                        options:
+                          url:
+                            type: str
+                            required: false
+                            description: Whitelisted URL
+                          comment:
+                            type: str
+                            required: false
+                            description: Comment for Whitelisted URL
+                      allowed_files:
+                        type: list
+                        required: false
+                        elements: dict
+                        description: List of Whitelisted Files
+                        options:
+                          sha256:
+                            type: str
+                            required: false
+                            description: SHA-256 hash of allowed file
+                          comment:
+                            type: str
+                            required: false
+                            description: Comment for Whitelisted File
+                  intrusion:
+                    type: dict
+                    required: false
+                    description: IDS/IPS Settings
+                    options:
+                      mode:
+                        type: str
+                        required: false
+                        description: Enable or Disable IDS/IPS
+                        choices:
+                          - disabled
+                          - detection
+                          - prevention
+                      rulesets:
+                        type: str
+                        required: false
+                        description: IDS Rulesets
+                        choices:
+                          - balanced
+                          - connectivity
+                          - security
+                      protected_networks:
+                        type: dict
+                        required: false
+                        description: Protected Networks - only used in passthrough mode
+                        options:
+                          use_default:
+                            type: bool
+                            required: false
+                            description: Use special IPV4 Addresses
+                          included_cidr:
+                            type: list
+                            required: false
+                            description: Included networks in CIDR format
+                          excluded_cidr:
+                            type: list
+                            required: false
+                            description: Excluded networks in CIDR format

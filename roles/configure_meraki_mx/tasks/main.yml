@@ -39,6 +39,14 @@
   loop_control:
     loop_var: appliance
 
+- name: Configure Meraki MX WAN Uplinks
+  ansible.builtin.include_tasks: configure_wan_uplinks.yml
+  vars:
+    network_id: "{{ network_ids[appliance.network]['network_id'] }}"
+  loop: "{{ meraki_mx_configuration.appliances }}"
+  loop_control:
+    loop_var: appliance
+
 - name: Configure Meraki MX Network VLAN Settings
   cisco.meraki.meraki_mx_network_vlan_settings:
     auth_key: "{{ auth_key }}"
@@ -58,6 +66,14 @@
 
 - name: Configure Meraki MX Ports
   ansible.builtin.include_tasks: configure_ports.yml
+  loop: "{{ meraki_mx_configuration.appliances }}"
+  loop_control:
+    loop_var: appliance
+
+- name: Configure Threat Protection
+  ansible.builtin.include_tasks: configure_threat_protection.yml
+  vars:
+    network_id: "{{ network_ids[appliance.network]['network_id'] }}"
   loop: "{{ meraki_mx_configuration.appliances }}"
   loop_control:
     loop_var: appliance

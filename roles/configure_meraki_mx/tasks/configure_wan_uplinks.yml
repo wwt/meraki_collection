@@ -1,0 +1,31 @@
+---
+- name: Query Device Serial Number for {{ appliance.name }}
+  cisco.meraki.meraki_device:
+    auth_key: "{{ auth_key }}"
+    org_name: "{{ appliance.organization }}"
+    net_name: "{{ appliance.network }}"
+    hostname: "{{ appliance.name }}"
+    state: query
+  register: device_results
+
+- name: Configure Meraki MX WAN Uplinks
+  block:
+    - name: "Configure MX WAN Uplinks for {{ appliance.name }}"
+      ansible.builtin.uri:
+        url: "{{ dashboard_base_url }}/devices/{{ device_results['data'][0]['serial'] }}/appliance/uplinks/settings"
+        method: PUT
+        status_code: 200
+        headers:
+          Content-Type: application/json
+          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
+        body_format: json
+        body: "{{ lookup('template', 'templates/wan_uplinks.j2') }}"
+      changed_when: api_result.status == 200
+      until: api_result.status != 429
+      delay: 5
+      retries: 3
+      register: api_result
+  rescue:
+    - name: Something went wrong...
+      ansible.builtin.debug:
+        msg: "ERROR: {{ api_result }}"
