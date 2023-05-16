@@ -77,3 +77,15 @@
   loop: "{{ meraki_mx_configuration.appliances }}"
   loop_control:
     loop_var: appliance
+
+- name: Configure L3 Firewall Rules
+  ansible.builtin.include_tasks: configure_l3_firewall.yml
+  loop: "{{ meraki_mx_configuration.appliances }}"
+  loop_control:
+    loop_var: appliance
+
+- name: Configure L7 Firewall Rules
+  ansible.builtin.include_tasks: configure_l7_firewall.yml
+  loop: "{{ meraki_mx_configuration.appliances }}"
+  loop_control:
+    loop_var: appliance

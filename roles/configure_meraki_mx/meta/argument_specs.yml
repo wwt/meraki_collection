@@ -460,3 +460,102 @@ argument_specs:
                             type: list
                             required: false
                             description: Excluded networks in CIDR format
+                  firewall:
+                    type: dict
+                    required: false
+                    options:
+                      l3_rules:
+                        type: list
+                        required: false
+                        elements: dict
+                        options:
+                          comment:
+                            type: str
+                            required: false
+                            description: Rule Description
+                          src_cidr:
+                            type: str
+                            required: false
+                            description: Source CIDR Address or 'Any'
+                          src_port:
+                            type: str
+                            required: false
+                            description: Source Port
+                          dest_cidr:
+                            type: str
+                            required: false
+                            description: Destination CIDR Address or 'Any'
+                          dest_port:
+                            type: str
+                            required: false
+                            description: Destination Port
+                          protocol:
+                            type: str
+                            required: false
+                            description: Protocol
+                            choices:
+                              - any
+                              - icmp
+                              - tcp
+                              - udp
+                          policy:
+                            type: str
+                            required: false
+                            description: Policy Action
+                            choices:
+                              - allow
+                              - deny
+                      l7_rules:
+                        type: list
+                        required: false
+                        elements: dict
+                        description: Layer 7 Firewall Rules
+                        options:
+                          application:
+                            type: dict
+                            required: false
+                            description: Application to filter
+                            options:
+                              id:
+                                type: str
+                                required: false
+                                description: URI of application as defined by Meraki
+                              name:
+                                type: str
+                                required: false
+                                description: Name of application as defined by Meraki
+                          countries:
+                            type: list
+                            required: false
+                            description: List of countries - two leter ISO 3166-1 alpha-2
+                            elements: str
+                          host:
+                            type: str
+                            required: false
+                            description: FQDN of host to filter
+                          ip_range:
+                            type: str
+                            required: false
+                            description: CIDR range of IP, can append port with ":"
+                          policy:
+                            type: str
+                            required: false
+                            description: Policy to apply
+                            choices:
+                              - deny
+                          port:
+                            type: str
+                            required: false
+                            description: TCP or UDP port to filter
+                          type:
+                            type: str
+                            required: false
+                            description: Rule Type
+                            choices:
+                              - application
+                              - application_category
+                              - blocked_countries
+                              - host
+                              - ip_range
+                              - port
+                              - allowed_countries

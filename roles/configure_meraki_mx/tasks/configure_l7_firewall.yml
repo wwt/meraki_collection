@@ -1,0 +1,8 @@
+---
+- name: "Configure Meraki MX L7 Firewall for {{ appliance.name }}"
+  cisco.meraki.meraki_mx_l7_firewall:
+    auth_key: "{{ auth_key }}"
+    org_name: "{{ appliance.organization }}"
+    net_name: "{{ appliance.network }}"
+    state: present
+    rules: "{{ appliance.threat_protection.firewall.l7_rules }}"
