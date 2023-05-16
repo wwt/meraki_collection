@@ -1,0 +1,16 @@
+---
+argument_specs:
+  # roles/configure_meraki_mr/main.yml entry point
+  main:
+    short_description: Role to configure Meraki MR Access Points
+    author: Nick Thompson <github/@nsthompson>
+    options:
+      auth_key:
+        type: str
+        required: true
+        description: Meraki API Auth Key
+      meraki_mr_configuration:
+        type: dict
+        required: true
+        options:
+          access_points: blah
