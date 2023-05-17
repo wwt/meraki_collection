@@ -43,6 +43,21 @@
   loop_control:
     loop_var: profile
   when: rf_profile_ids[profile.name] is undefined and profile.state == "present"
+  register: rf_profile_output
+
+- name: Add newly created RF profile to dict
+  ansible.builtin.set_fact:
+    rf_profile_ids: '{{ rf_profile_ids|default({}) | combine(
+      {
+        result.data.name: {
+          "rf_profile_id": result.data.id,
+        }
+      }
+      ) }}'
+  loop: "{{ rf_profile_output.results }}"
+  loop_control:
+    loop_var: result
+  when: rf_profile_output is defined
 
 - name: Updating RF Profiles
   cisco.meraki.meraki_mr_rf_profile:
