@@ -30,3 +30,41 @@
   loop: "{{ network_results.results }}"
   loop_control:
     loop_var: result
+
+- name: Remove Default SSID
+  ansible.builtin.include_tasks: remove_default_ssid.yml
+  loop: "{{ meraki_mr_configuration.access_points }}"
+  loop_control:
+    loop_var: ap
+
+- name: Configure General Settings
+  ansible.builtin.include_tasks: configure_general_settings.yml
+  loop: "{{ meraki_mr_configuration.access_points }}"
+  loop_control:
+    loop_var: ap
+
+- name: Configure RF Profiles
+  ansible.builtin.include_tasks: configure_rf_profiles.yml
+  loop: "{{ meraki_mr_configuration.access_points }}"
+  loop_control:
+    loop_var: ap
+
+- name: Assign RF Profiles
+  ansible.builtin.include_tasks: assign_rf_profiles.yml
+  loop: "{{ meraki_mr_configuration.access_points }}"
+  loop_control:
+    loop_var: ap
+
+- name: Configure SSIDs
+  ansible.builtin.include_tasks: configure_ssids.yml
+  loop: "{{ meraki_mr_configuration.access_points }}"
+  loop_control:
+    loop_var: ap
+
+- name: Configure Bluetooth Settings
+  ansible.builtin.include_tasks: configure_bluetooth.yml
+  vars:
+    network_id: "{{ network_ids[ap.network]['network_id'] }}"
+  loop: "{{ meraki_mr_configuration.access_points }}"
+  loop_control:
+    loop_var: ap

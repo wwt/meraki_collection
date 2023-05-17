@@ -1,0 +1,36 @@
+---
+- name: Configuring Wireless SSIDs
+  cisco.meraki.meraki_ssid:
+    auth_key: "{{ auth_key }}"
+    org_name: "{{ ap.organization }}"
+    net_name: "{{ ap.network }}"
+    name: "{{ ssid.name }}"
+    state: "{{ ssid.state }}"
+    enabled: "{{ ssid.enabled }}"
+    visible: "{{ ssid.visible | default(omit) }}"
+    available_on_all_aps: "{{ ssid.available_on_all_aps | default(omit) }}"
+    auth_mode: "{{ ssid.authentication.auth_mode | default(omit) }}"
+    psk: "{{ ssid.authentication.psk | default(omit) }}"
+    encryption_mode: "{{ ssid.authentication.encryption_mode | default(omit) }}"
+    wpa_encryption_mode: "{{ ssid.authentication.wpa_encryption_mode | default(omit) }}"
+    use_vlan_tagging: "{{ ssid.vlan.use_vlan_tagging | default(omit) }}"
+    default_vlan_id: "{{ ssid.vlan.default_vlan_id | default(omit) }}"
+    ip_assignment_mode: "{{ ssid.ip_assignment_mode | default(omit) }}"
+    lan_isolation_enabled: "{{ ssid.lan_isolation_enabled | default(omit) }}"
+    splash_page: "{{ ssid.splash_page | default(omit) }}"
+  loop: "{{ ap.ssids }}"
+  loop_control:
+    loop_var: ssid
+  when: ssid.state == "present"
+
+- name: Remove Wireless SSIDs
+  cisco.meraki.meraki_ssid:
+    auth_key: "{{ auth_key }}"
+    org_name: "{{ ap.organization }}"
+    net_name: "{{ ap.network }}"
+    name: "{{ ssid.name }}"
+    state: "{{ ssid.state }}"
+  loop: "{{ ap.ssids }}"
+  loop_control:
+    loop_var: ssid
+  when: ssid.state == "absent"
