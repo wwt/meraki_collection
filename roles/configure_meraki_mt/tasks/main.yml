@@ -1,0 +1,51 @@
+---
+#
+# Ansible Role to Configure Meraki MT Sensors
+#
+# Copyright (C) 2023 World Wide Technology
+# All Rights Reserved
+#
+# Written by: Nick Thompson (github/@nsthompson)
+#
+- name: Get Meraki Network IDs
+  cisco.meraki.meraki_network:
+    auth_key: "{{ auth_key }}"
+    org_name: "{{ sensor.organization }}"
+    net_name: "{{ sensor.network }}"
+    state: query
+  loop: "{{ meraki_mt_configuration.sensors }}"
+  loop_control:
+    loop_var: sensor
+  register: network_results
+
+- name: Build dict of Network Name to IDs
+  ansible.builtin.set_fact:
+    network_ids: '{{ network_ids|default({}) | combine(
+      {
+        result.data.name: {
+          "network_id": result.data.id,
+        }
+      }
+      ) }}'
+  loop: "{{ network_results.results }}"
+  loop_control:
+    loop_var: result
+
+- name: Configure MQTT
+  ansible.builtin.include_tasks: configure_mqtt.yml
+  vars:
+    network_id: "{{ network_ids[sensor.network]['network_id'] }}"
+  loop: "{{ meraki_mt_configuration.sensors }}"
+  loop_control:
+    loop_var: sensor
+
+#
+# Sensor Automation API Endpoint Is not published yet
+#
+# - name: Configure Sensor Automations
+#   ansible.builtin.include_tasks: configure_sensor_automations.yml
+#   vars:
+#     network_id: "{{ network_ids[sensor.network]['network_id'] }}"
+#   loop: "{{ meraki_mt_configuration.sensors }}"
+#   loop_control:
+#     loop_var: sensor
