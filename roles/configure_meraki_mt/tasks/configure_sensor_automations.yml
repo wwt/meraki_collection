@@ -1,4 +1,10 @@
 ---
+#
+#
+# needs work - API is not exposed
+#
+#
+#
 - name: Query Device Serial Number for {{ sensor.name }}
   cisco.meraki.meraki_device:
     auth_key: "{{ auth_key }}"

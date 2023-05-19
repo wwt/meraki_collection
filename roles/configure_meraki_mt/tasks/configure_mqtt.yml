@@ -1,7 +1,7 @@
 ---
 - name: Query for existing MQTT brokers
   block:
-    - name: "Query for existing MQTT brokers on Network {{ sensor.network }}"
+    - name: "Query for existing MQTT brokers on Network {{ config.network }}"
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/networks/{{ network_id }}/mqttBrokers"
         method: GET
@@ -14,7 +14,7 @@
       delay: 5
       retries: 3
       register: broker_result
-      when: sensor.mqtt_brokers is defined
+      when: config.mqtt_brokers is defined
   rescue:
     - name: Something went wrong...
       ansible.builtin.debug:
@@ -22,7 +22,7 @@
 
 - name: Add discovered brokers to dict
   ansible.builtin.set_fact:
-    mqtt_broker_ids: '{{ mqtt_broker_ids|default({}) | combine(
+    mqtt_broker_ids: '{{ mqtt_broker_ids | default({}) | combine(
       {
         result.name: {
           "broker_id": result.id,
@@ -36,7 +36,7 @@
 
 - name: Configure MQTT Broker
   block:
-    - name: "Configure MQTT Broker for Network {{ sensor.network }}"
+    - name: "Configure MQTT Broker for Network {{ config.network }}"
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/networks/{{ network_id }}/mqttBrokers"
         method: POST
@@ -53,7 +53,7 @@
       retries: 3
       register: create_broker_result
       when: mqtt_broker_ids[broker.name] is undefined and broker.state == "present"
-      loop: "{{ sensor.mqtt_brokers }}"
+      loop: "{{ config.mqtt_brokers }}"
       loop_control:
         loop_var: broker
   rescue:
@@ -63,7 +63,7 @@
 
 - name: Add newly created broker to dict
   ansible.builtin.set_fact:
-    mqtt_broker_ids: '{{ mqtt_broker_ids|default({}) | combine(
+    mqtt_broker_ids: '{{ mqtt_broker_ids | default({}) | combine(
       {
         result.json.name: {
           "broker_id": result.json.id,
@@ -77,7 +77,7 @@
 
 - name: Delete MQTT Broker
   block:
-    - name: "Deleting MQTT Broker for Network {{ sensor.network }}"
+    - name: "Deleting MQTT Broker for Network {{ config.network }}"
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/networks/{{ network_id }}/mqttBrokers/{{ mqtt_broker_ids[broker.name].broker_id }}"
         method: DELETE
@@ -92,7 +92,7 @@
       retries: 3
       register: delete_broker_result
       when: mqtt_broker_ids[broker.name] is defined and broker.state == "absent"
-      loop: "{{ sensor.mqtt_brokers }}"
+      loop: "{{ config.mqtt_brokers }}"
       loop_control:
         loop_var: broker
   rescue:
@@ -102,7 +102,7 @@
 
 - name: Enable MQTT Broker
   block:
-    - name: "Enabling MQTT Broker for Network {{ sensor.network }}"
+    - name: "Enabling MQTT Broker for Network {{ config.network }}"
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/networks/{{ network_id }}/sensor/mqttBrokers/{{ mqtt_broker_ids[broker.name].broker_id }}"
         method: PUT
@@ -118,7 +118,7 @@
       delay: 5
       retries: 3
       register: enable_broker_result
-      loop: "{{ sensor.mqtt_brokers }}"
+      loop: "{{ config.mqtt_brokers }}"
       loop_control:
         loop_var: broker
       when: mqtt_broker_ids[broker.name] is defined and broker.enabled

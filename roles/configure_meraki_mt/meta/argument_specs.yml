@@ -10,9 +10,18 @@ argument_specs:
         required: true
         description: Meraki API Auth Key
       meraki_mt_configuration:
-        type: dict
+        type: list
+        elements: dict
         required: true
         options:
+          organization:
+            type: str
+            required: true
+            description: Meraki Organization
+          network:
+            type: str
+            required: true
+            description: Meraki Network
           sensors:
             type: list
             required: true
@@ -23,227 +32,219 @@ argument_specs:
                 type: str
                 required: true
                 description: Name of MT Sensor
-              organization:
+          mqtt_brokers:
+            type: list
+            elements: dict
+            required: false
+            description: MQTT Broker Configuration
+            options:
+              name:
                 type: str
-                required: true
-                description: Meraki Organization
-              network:
+                required: false
+                description: MQTT Broker Name
+              state:
                 type: str
-                required: true
-                description: Meraki Network Name
-              mqtt_brokers:
+                required: false
+                description: MQTT Broker State
+                choices:
+                  - present
+                  - absent
+              enabled:
+                type: bool
+                required: false
+                description: Enable Broker - Only ONE broker can be active at a time
+              host:
+                type: str
+                required: false
+                description: MQTT host
+              port:
+                type: int
+                required: false
+                description: MQTT Server Port
+              authentication:
+                type: dict
+                required: false
+                options:
+                  username:
+                    type: str
+                    required: false
+                    description: MQTT Username
+                  password:
+                    type: str
+                    required: false
+                    description: MQTT Password
+              security:
+                type: dict
+                required: false
+                options:
+                  mode:
+                    type: str
+                    required: false
+                    description: Security Mode
+                    choices:
+                      - none
+                      - tls
+                  cert_file:
+                    type: str
+                    required: false
+                    description: CA Certificate File Path
+                  hostname_verification:
+                    type: bool
+                    required: false
+                    description: Verify Hostnames
+          automations:
+            type: list
+            elements: dict
+            required: false
+            description: MT Sensor Automations
+            options:
+              name:
+                type: str
+                required: false
+                description: Automation Name
+              enabled:
+                type: bool
+                required: false
+                description: Automation Enabled
+              icon:
+                type: str
+                required: false
+                description: Automation Icon
+                choices:
+                  - rocket
+                  - alarm
+                  - atom
+                  - barcode
+                  - briefcase
+                  - key
+                  - flask
+                  - sun
+                  - chalkboard
+                  - trophy
+                  - traffic
+                  - target
+                  - chat
+                  - shield
+                  - trend
+                  - warning
+              conditions:
                 type: list
                 elements: dict
                 required: false
-                description: MQTT Broker Configuration
+                description: Automation Conditions
                 options:
-                  name:
+                  metric:
                     type: str
                     required: false
-                    description: MQTT Broker Name
-                  state:
-                    type: str
-                    required: false
-                    description: MQTT Broker State
+                    description: Metric Type
                     choices:
-                      - present
-                      - absent
-                  enabled:
-                    type: bool
-                    required: false
-                    description: Enable Broker - Only ONE broker can be active at a time
-                  host:
-                    type: str
-                    required: false
-                    description: MQTT host
-                  port:
-                    type: int
-                    required: false
-                    description: MQTT Server Port
-                  authentication:
+                      - button
+                  button:
                     type: dict
                     required: false
+                    description: Button Settings
                     options:
-                      username:
+                      press_type:
                         type: str
                         required: false
-                        description: MQTT Username
-                      password:
-                        type: str
-                        required: false
-                        description: MQTT Password
-                  security:
-                    type: dict
-                    required: false
-                    options:
-                      mode:
-                        type: str
-                        required: false
-                        description: Security Mode
+                        description: Button Press Duration
                         choices:
-                          - none
-                          - tls
-                      cert_file:
-                        type: str
-                        required: false
-                        description: CA Certificate File Path
-                      hostname_verification:
-                        type: bool
-                        required: false
-                        description: Verify Hostnames
-              automations:
+                          - short
+                          - long
+                  serials:
+                    type: list
+                    elements: str
+                    required: false
+                    description: Sensor Serial Numbers
+              targets:
                 type: list
                 elements: dict
                 required: false
-                description: MT Sensor Automations
+                description: Automation Targets
                 options:
-                  name:
+                  target:
                     type: str
                     required: false
-                    description: Automation Name
-                  enabled:
-                    type: bool
-                    required: false
-                    description: Automation Enabled
-                  icon:
-                    type: str
-                    required: false
-                    description: Automation Icon
+                    description: Target Type
                     choices:
-                      - rocket
-                      - alarm
-                      - atom
-                      - barcode
-                      - briefcase
-                      - key
-                      - flask
-                      - sun
-                      - chalkboard
-                      - trophy
-                      - traffic
-                      - target
-                      - chat
-                      - shield
-                      - trend
-                      - warning
-                  conditions:
-                    type: list
-                    elements: dict
+                      - notification
+                      - snapshot
+                      - ssid
+                      - webhook
+                  notification:
+                    type: dict
                     required: false
-                    description: Automation Conditions
+                    description: Email or SMS Notification
                     options:
-                      metric:
+                      recipient:
                         type: str
                         required: false
-                        description: Metric Type
-                        choices:
-                          - button
-                      button:
-                        type: dict
-                        required: false
-                        description: Button Settings
-                        options:
-                          press_type:
-                            type: str
-                            required: false
-                            description: Button Press Duration
-                            choices:
-                              - short
-                              - long
-                      serials:
-                        type: list
-                        elements: str
-                        required: false
-                        description: Sensor Serial Numbers
-                  targets:
-                    type: list
-                    elements: dict
-                    required: false
-                    description: Automation Targets
-                    options:
-                      target:
+                        description: Email Address or Phone Number
+                      message:
                         type: str
                         required: false
-                        description: Target Type
+                        description: Message - 255 Character Max
+                      notification_type:
+                        type: str
+                        required: false
+                        description: Notification Type
                         choices:
-                          - notification
-                          - snapshot
-                          - ssid
-                          - webhook
-                      notification:
-                        type: dict
-                        required: false
-                        description: Email or SMS Notification
-                        options:
-                          recipient:
-                            type: str
-                            required: false
-                            description: Email Address or Phone Number
-                          message:
-                            type: str
-                            required: false
-                            description: Message - 255 Character Max
-                          notification_type:
-                            type: str
-                            required: false
-                            description: Notification Type
-                            choices:
-                              - email
-                              - phone
-                      snapshot:
-                        type: dict
-                        required: false
-                        description: Camera Snapshot
-                        options:
-                          recipient:
-                            type: str
-                            required: false
-                            description: Email Address or Phone Number
-                          camera:
-                            type: str
-                            required: false
-                            description: Camera Serial Number
-                          notification_type:
-                            type: str
-                            required: false
-                            description: Notification Type
-                            choices:
-                              - email
-                              - phone
-                      webhook:
-                        type: dict
-                        required: false
-                        description: Webhook Alert
-                        options:
-                          id:
-                            type: str
-                            required: false
-                            description: Meraki Webhook ID
-                          message:
-                            type: str
-                            required: false
-                            description: Webhook Message - 255 Character Max
-                      ssid:
-                        type: dict
-                        required: false
-                        description: Toggle SSID
-                        options:
-                          id:
-                            type: str
-                            required: false
-                            description: Meraki SSID ID
-                          action:
-                            type: str
-                            required: false
-                            description: SSID Toggle Action
-                            choices:
-                              - disable
-                              - enable
-                              - toggle
-                  schedule:
-                    type: str
+                          - email
+                          - phone
+                  snapshot:
+                    type: dict
                     required: false
-                    description: Sensor Schedule
+                    description: Camera Snapshot
+                    options:
+                      recipient:
+                        type: str
+                        required: false
+                        description: Email Address or Phone Number
+                      camera:
+                        type: str
+                        required: false
+                        description: Camera Serial Number
+                      notification_type:
+                        type: str
+                        required: false
+                        description: Notification Type
+                        choices:
+                          - email
+                          - phone
+                  webhook:
+                    type: dict
+                    required: false
+                    description: Webhook Alert
+                    options:
+                      id:
+                        type: str
+                        required: false
+                        description: Meraki Webhook ID
+                      message:
+                        type: str
+                        required: false
+                        description: Webhook Message - 255 Character Max
+                  ssid:
+                    type: dict
+                    required: false
+                    description: Toggle SSID
+                    options:
+                      id:
+                        type: str
+                        required: false
+                        description: Meraki SSID ID
+                      action:
+                        type: str
+                        required: false
+                        description: SSID Toggle Action
+                        choices:
+                          - disable
+                          - enable
+                          - toggle
+          schedule:
+            type: str
+            required: false
+            description: Sensor Schedule
 
 
 
