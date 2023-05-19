@@ -1,0 +1,96 @@
+---
+argument_specs:
+  # roles/configure_meraki_mv/main.yml entry point
+  main:
+    short_description: Role to configure Meraki MV Cameras
+    author: Nick Thompson <github/@nsthompson>
+    options:
+      auth_key:
+        type: str
+        required: true
+        description: Meraki API Auth Key
+      meraki_mv_configuration:
+        type: list
+        elements: dict
+        required: true
+        options:
+          organization:
+            type: str
+            required: true
+            description: Meraki Organization
+          network:
+            type: str
+            required: true
+            description: Meraki Network
+          camera_profiles:
+            type: dict
+            required: false
+            description: Camera Profile Configuration
+            options:
+              wireless:
+                type: list
+                elements: dict
+                required: false
+                description: Wireless Profiles
+                options:
+                  name:
+                    type: str
+                    required: false
+                    description: Profile Name
+                  state:
+                    type: str
+                    required: false
+                    description: Profile state
+                    choices:
+                      - present
+                      - absent
+                  auth_mode:
+                    type: str
+                    required: false
+                    description: SSID Auth Mode
+                    choices:
+                      - psk
+                      - 8021x-radius
+                  encryption_mode:
+                    type: str
+                    required: false
+                    description: Encryption Mode
+                    choices:
+                      - wpa
+                      - wpa-eap
+                  ssid:
+                    type: str
+                    required: false
+                    description: SSID
+                  psk:
+                    type: str
+                    required: false
+                    description: Wireless PSK
+                  username:
+                    type: str
+                    required: false
+                    description: Username when using 8021x-radius
+                  password:
+                    type: str
+                    required: false
+                    description: Password when using 8021x-radius
+              quality_and_retention:
+                type: list
+                elements: dict
+                required: false
+                description: Quality and Retention Profiles
+              schedules:
+                type: list
+                elements: dict
+                required: false
+                description: Camera Schedules
+          cameras:
+            type: list
+            elements: dict
+            required: false
+            description: Cameras
+            options:
+              name:
+                type: str
+                required: false
+                description: Camera Name
