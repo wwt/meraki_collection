@@ -57,7 +57,7 @@
   loop: "{{ rf_profile_output.results }}"
   loop_control:
     loop_var: result
-  when: rf_profile_output is defined
+  when: not rf_profile_output.skipped
 
 - name: Updating RF Profiles
   cisco.meraki.meraki_mr_rf_profile:
