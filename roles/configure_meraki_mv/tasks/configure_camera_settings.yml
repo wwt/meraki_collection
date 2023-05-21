@@ -114,10 +114,6 @@
       ansible.builtin.debug:
         msg: "ERROR: {{ query_wireless_profiles_result }}"
 
-- name: debug var
-  ansible.builtin.debug:
-    var: query_wireless_profiles_result
-
 - name: Add Wireless Profile ID to dict
   ansible.builtin.set_fact:
     wireless_profile_data: '{{ wireless_profile_data | default({}) | combine(
@@ -174,7 +170,7 @@
       delay: 5
       retries: 3
       register: query_broker_result
-      when: camera.sense.mqtt_broker_name is defined and camera.state == "present"
+      when: camera.sense is defined and camera.sense.mqtt_broker_name is defined and camera.state == "present"
       loop: "{{ config.cameras }}"
       loop_control:
         loop_var: camera
@@ -215,7 +211,7 @@
       delay: 5
       retries: 3
       register: update_sense_result
-      when: camera.sense.enabled and camera.state == "present"
+      when: camera.sense is defined and camera.sense.enabled and camera.state == "present"
       loop: "{{ config.cameras }}"
       loop_control:
         loop_var: camera
