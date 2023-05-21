@@ -43,8 +43,21 @@
   loop_control:
     loop_var: config
 
-- name: Configure Camera Quality and Retention Profiles
-  ansible.builtin.include_tasks: configure_quality_profiles.yml
+#
+#
+# QUALITY PROFILES CURRENTLY DO NOT WORK - OPENED TICKET WITH MERAKI
+#
+#
+# - name: Configure Camera Quality and Retention Profiles
+#   ansible.builtin.include_tasks: configure_quality_profiles.yml
+#   vars:
+#     network_id: "{{ network_ids[config.network]['network_id'] }}"
+#   loop: "{{ meraki_mv_configuration }}"
+#   loop_control:
+#     loop_var: config
+
+- name: Configure Camera Settings
+  ansible.builtin.include_tasks: configure_camera_settings.yml
   vars:
     network_id: "{{ network_ids[config.network]['network_id'] }}"
   loop: "{{ meraki_mv_configuration }}"

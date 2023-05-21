@@ -1,0 +1,114 @@
+---
+- name: Query for existing Camera Quality Profiles
+  block:
+    - name: "Query for existing Camera Quality Profiles on Network {{ config.network }}"
+      ansible.builtin.uri:
+        url: "{{ dashboard_base_url }}/networks/{{ network_id }}/camera/qualityRetentionProfiles"
+        method: GET
+        status_code: 200
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
+      until: profile_result.status != 429
+      delay: 5
+      retries: 3
+      register: profile_result
+      when: config.camera_profiles is defined
+  rescue:
+    - name: Something went wrong...
+      ansible.builtin.debug:
+        msg: "ERROR: {{ profile_result }}"
+
+- name: Add discovered profiles to dict
+  ansible.builtin.set_fact:
+    quality_profile_ids: '{{ quality_profile_ids | default({}) | combine(
+      {
+        result.name: {
+          "profile_id": result.id,
+        }
+      }
+      ) }}'
+  loop: "{{ profile_result.json }}"
+  loop_control:
+    loop_var: result
+  when: profile_result.status == 200
+
+- name: Update Camera Quality Profiles
+  block:
+    - name: "Update Camera Quality Profiles for Network {{ config.network }}"
+      ansible.builtin.uri:
+        url: "{{ dashboard_base_url }}/networks/{{ network_id }}/camera/qualityRetentionProfiles/{{ quality_profile_ids[profile.name]['profile_id'] }}"
+        method: PUT
+        status_code: 200
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
+        body_format: json
+        body: "{{ lookup('template', 'templates/camera_quality_profile.j2') }}"
+      changed_when: update_profile_result.status == 200
+      until: update_profile_result.status != 429
+      delay: 5
+      retries: 3
+      register: update_profile_result
+      when: quality_profile_ids[profile.name] is defined and profile.state == "present"
+      loop: "{{ config.camera_profiles.quality_and_retention }}"
+      loop_control:
+        loop_var: profile
+  rescue:
+    - name: Something went wrong...
+      ansible.builtin.debug:
+        msg: "ERROR: {{ update_profile_result }}"
+
+- name: Create Camera Quality Profiles
+  block:
+    - name: "Create Camera Quality Profiles for Network {{ config.network }}"
+      ansible.builtin.uri:
+        url: "{{ dashboard_base_url }}/networks/{{ network_id }}/camera/qualityRetentionProfiles"
+        method: POST
+        status_code: 201
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
+        body_format: json
+        body: "{{ lookup('template', 'templates/camera_quality_profile.j2') }}"
+      changed_when: create_profile_result.status == 201
+      until: create_profile_result.status != 429
+      delay: 5
+      retries: 3
+      register: create_profile_result
+      when: quality_profile_ids[profile.name] is undefined and profile.state == "present"
+      loop: "{{ config.camera_profiles.quality_and_retention }}"
+      loop_control:
+        loop_var: profile
+  rescue:
+    - name: Something went wrong...
+      ansible.builtin.debug:
+        msg: "ERROR: {{ create_profile_result }}"
+
+- name: Delete Camera Wireless Profiles
+  block:
+    - name: "Delete Camera Wireless Profile on Network {{ config.network }}"
+      ansible.builtin.uri:
+        url: "{{ dashboard_base_url }}/networks/{{ network_id }}/camera/qualityRetentionProfiles/{{ quality_profile_ids[profile.name]['profile_id'] }}"
+        method: DELETE
+        status_code: 204
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
+      changed_when: delete_profile_result.status == 204
+      until: delete_profile_result.status != 429
+      delay: 5
+      retries: 3
+      register: delete_profile_result
+      when: quality_profile_ids[profile.name] is defined and profile.state == "absent"
+      loop: "{{ config.camera_profiles.quality_and_retention }}"
+      loop_control:
+        loop_var: profile
+  rescue:
+    - name: Something went wrong...
+      ansible.builtin.debug:
+        msg: "ERROR: {{ delete_profile_result }}"

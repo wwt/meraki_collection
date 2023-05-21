@@ -1,0 +1,225 @@
+---
+- name: Query Device Serial Number for Cameras
+  cisco.meraki.meraki_device:
+    auth_key: "{{ auth_key }}"
+    org_name: "{{ config.organization }}"
+    net_name: "{{ config.network }}"
+    hostname: "{{ camera.name }}"
+    state: query
+  register: device_results
+  loop: "{{ config.cameras }}"
+  loop_control:
+    loop_var: camera
+
+- name: Add camera serial number information to dict
+  ansible.builtin.set_fact:
+    camera_data: '{{ camera_data | default({}) | combine(
+      {
+        result.data[0].name: {
+          "serial": result.data[0].serial,
+        }
+      }
+      ) }}'
+  loop: "{{ device_results.results }}"
+  loop_control:
+    loop_var: result
+  when: result.data is defined
+
+- name: Query Quality and Retention Profile Names
+  block:
+    - name: Query Quality and Retention Profile Names
+      ansible.builtin.uri:
+        url: "{{ dashboard_base_url }}/networks/{{ network_id }}/camera/qualityRetentionProfiles"
+        method: GET
+        status_code: 200
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
+      until: query_profile_result.status != 429
+      delay: 5
+      retries: 3
+      register: query_profile_result
+      when: camera.quality_and_retention.profile_name is defined and camera.state == "present"
+      loop: "{{ config.cameras }}"
+      loop_control:
+        loop_var: camera
+  rescue:
+    - name: Something went wrong...
+      ansible.builtin.debug:
+        msg: "ERROR: {{ query_profile_result }}"
+
+- name: Add camera quality profile ID to dict
+  ansible.builtin.set_fact:
+    profile_data: '{{ profile_data | default({}) | combine(
+      {
+        result.json[0].name: {
+          "id": result.json[0].id,
+        }
+      }
+      ) }}'
+  loop: "{{ query_profile_result.results }}"
+  loop_control:
+    loop_var: result
+  when: result.json is defined
+
+- name: Configure Camera Quality and Retention Settings
+  block:
+    - name: Configure Camera Quality and Retention Settings
+      ansible.builtin.uri:
+        url: "{{ dashboard_base_url }}/devices/{{ camera_data[camera.name]['serial'] }}/camera/qualityAndRetention"
+        method: PUT
+        status_code: 200
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
+        body_format: json
+        body: "{{ lookup('template', 'templates/camera_quality_settings.j2') }}"
+      changed_when: update_profile_result.status == 200
+      until: update_profile_result.status != 429
+      delay: 5
+      retries: 3
+      register: update_profile_result
+      when: camera_data[camera.name] is defined and camera.state == "present"
+      loop: "{{ config.cameras }}"
+      loop_control:
+        loop_var: camera
+  rescue:
+    - name: Something went wrong...
+      ansible.builtin.debug:
+        msg: "ERROR: {{ update_profile_result.results[0].json.errors }}"
+
+- name: Query Network Camera Wireless Profiles
+  block:
+    - name: "Query Network Camera Wireless Profiles on {{ config.network }}"
+      ansible.builtin.uri:
+        url: "{{ dashboard_base_url }}/networks/{{ network_id }}/camera/wirelessProfiles"
+        method: GET
+        status_code: 200
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
+      until: query_wireless_profiles_result.status != 429
+      delay: 5
+      retries: 3
+      register: query_wireless_profiles_result
+      when: camera.wireless is defined and camera.state == "present"
+      loop: "{{ config.cameras }}"
+      loop_control:
+        loop_var: camera
+  rescue:
+    - name: Something went wrong...
+      ansible.builtin.debug:
+        msg: "ERROR: {{ query_wireless_profiles_result }}"
+
+- name: debug var
+  ansible.builtin.debug:
+    var: query_wireless_profiles_result
+
+- name: Add Wireless Profile ID to dict
+  ansible.builtin.set_fact:
+    wireless_profile_data: '{{ wireless_profile_data | default({}) | combine(
+      {
+        result.name: {
+          "id": result.id,
+        }
+      }
+      ) }}'
+  loop: "{{ query_wireless_profiles_result.results[0].json }}"
+  loop_control:
+    loop_var: result
+  when: query_wireless_profiles_result.results[0].json is defined
+
+- name: Configure Camera Wireless Profiles
+  block:
+    - name: Configure Camera Wireless Profiles
+      ansible.builtin.uri:
+        url: "{{ dashboard_base_url }}/devices/{{ camera_data[camera.name]['serial'] }}/camera/wirelessProfiles"
+        method: PUT
+        status_code: 200
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
+        body_format: json
+        body: "{{ lookup('template', 'templates/assign_wireless_profile.j2') }}"
+      changed_when: update_wireless_profile_result.status == 200
+      until: update_wireless_profile_result.status != 429
+      delay: 5
+      retries: 3
+      register: update_wireless_profile_result
+      when: camera.wireless is defined and camera.state == "present"
+      loop: "{{ config.cameras }}"
+      loop_control:
+        loop_var: camera
+  rescue:
+    - name: Something went wrong...
+      ansible.builtin.debug:
+        msg: "ERROR: {{ update_wireless_profile_result.results[0].json.error }}"
+
+- name: Query MQTT Broker Names
+  block:
+    - name: Query MQTT Broker Names
+      ansible.builtin.uri:
+        url: "{{ dashboard_base_url }}/networks/{{ network_id }}/mqttBrokers"
+        method: GET
+        status_code: 200
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
+      until: query_broker_result.status != 429
+      delay: 5
+      retries: 3
+      register: query_broker_result
+      when: camera.sense.mqtt_broker_name is defined and camera.state == "present"
+      loop: "{{ config.cameras }}"
+      loop_control:
+        loop_var: camera
+  rescue:
+    - name: Something went wrong...
+      ansible.builtin.debug:
+        msg: "ERROR: {{ query_broker_result }}"
+
+- name: Add MQTT Broker ID to dict
+  ansible.builtin.set_fact:
+    broker_data: '{{ broker_data | default({}) | combine(
+      {
+        result.json[0].name: {
+          "id": result.json[0].id,
+        }
+      }
+      ) }}'
+  loop: "{{ query_broker_result.results }}"
+  loop_control:
+    loop_var: result
+  when: result.json is defined
+
+- name: Configure Camera Sense Settings
+  block:
+    - name: Configure Camera Sense Settings
+      ansible.builtin.uri:
+        url: "{{ dashboard_base_url }}/devices/{{ camera_data[camera.name]['serial'] }}/camera/sense"
+        method: PUT
+        status_code: 200
+        headers:
+          Content-Type: application/json
+          Accept: application/json
+          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
+        body_format: json
+        body: "{{ lookup('template', 'templates/camera_sense.j2') }}"
+      changed_when: update_sense_result.status == 200
+      until: update_sense_result.status != 429
+      delay: 5
+      retries: 3
+      register: update_sense_result
+      when: camera.sense.enabled and camera.state == "present"
+      loop: "{{ config.cameras }}"
+      loop_control:
+        loop_var: camera
+  rescue:
+    - name: Something went wrong...
+      ansible.builtin.debug:
+        msg: "ERROR: {{ update_sense_result.results[0].json.errors }}"
