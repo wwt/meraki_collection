@@ -18,6 +18,11 @@
     loop_var: config
   register: network_results
 
+- name: Failure - Network DOES NOT exist
+  ansible.builtin.fail:
+    msg: Meraki Network is not provisioned
+  when: network_results.results[0].data.id is not defined
+
 - name: Build dict of Network Name to IDs
   ansible.builtin.set_fact:
     network_ids: '{{ network_ids | default({}) | combine(

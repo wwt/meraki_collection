@@ -7,6 +7,7 @@
 #
 # Written by: Nick Thompson (github/@nsthompson)
 #
+
 - name: Get Meraki Network IDs
   cisco.meraki.meraki_network:
     auth_key: "{{ auth_key }}"
@@ -18,9 +19,10 @@
     loop_var: config
   register: network_results
 
-- name: Debug var
-  ansible.builtin.debug:
-    var: network_results
+- name: Failure - Network DOES NOT exist
+  ansible.builtin.fail:
+    msg: Meraki Network is not provisioned
+  when: network_results.results[0].data.id is not defined
 
 - name: Build dict of Network Name to IDs
   ansible.builtin.set_fact:
