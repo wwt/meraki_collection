@@ -245,6 +245,3 @@ argument_specs:
             type: str
             required: false
             description: Sensor Schedule
-
-
-

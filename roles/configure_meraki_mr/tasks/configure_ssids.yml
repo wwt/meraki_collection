@@ -1,6 +1,6 @@
 ---
 - name: Configuring Wireless SSIDs
-  cisco.meraki.meraki_ssid:
+  cisco.meraki.meraki_mr_ssid:
     auth_key: "{{ auth_key }}"
     org_name: "{{ ap.organization }}"
     net_name: "{{ ap.network }}"
@@ -24,7 +24,7 @@
   when: ssid.state == "present"
 
 - name: Remove Wireless SSIDs
-  cisco.meraki.meraki_ssid:
+  cisco.meraki.meraki_mr_ssid:
     auth_key: "{{ auth_key }}"
     org_name: "{{ ap.organization }}"
     net_name: "{{ ap.network }}"

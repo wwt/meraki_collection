@@ -22,13 +22,14 @@
 
 - name: Add discovered profiles to dict
   ansible.builtin.set_fact:
-    wireless_profile_ids: '{{ wireless_profile_ids | default({}) | combine(
-      {
-        result.name: {
-          "profile_id": result.id,
+    wireless_profile_ids: >-
+      {{ wireless_profile_ids | default({}) | combine(
+        {
+          result.name: {
+            "profile_id": result.id,
+          }
         }
-      }
-      ) }}'
+      ) }}
   loop: "{{ profile_result.json }}"
   loop_control:
     loop_var: result

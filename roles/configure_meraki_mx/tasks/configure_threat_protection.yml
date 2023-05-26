@@ -25,7 +25,7 @@
         msg: "ERROR: {{ api_result }}"
 
 - name: "Configure Meraki MX Intrusion Detection and Prevention Settings for {{ appliance.name }}"
-  cisco.meraki.meraki_intrusion_prevention:
+  cisco.meraki.meraki_mx_intrusion_prevention:
     auth_key: "{{ auth_key }}"
     org_name: "{{ appliance.organization }}"
     net_name: "{{ appliance.network }}"

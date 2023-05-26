@@ -15,13 +15,14 @@
 
 - name: Build dict of RF Profile Names to IDs
   ansible.builtin.set_fact:
-    rf_profile_ids: '{{ rf_profile_ids|default({}) | combine(
-      {
-        result.name: {
-          "rf_profile_id": result.id,
+    rf_profile_ids: >-
+      {{ rf_profile_ids | default({}) | combine(
+        {
+          result.name: {
+            "rf_profile_id": result.id,
+          }
         }
-      }
-      ) }}'
+      ) }}
   loop: "{{ profile_results.data }}"
   loop_control:
     loop_var: result
@@ -47,13 +48,14 @@
 
 - name: Add newly created RF profile to dict
   ansible.builtin.set_fact:
-    rf_profile_ids: '{{ rf_profile_ids|default({}) | combine(
-      {
-        result.data.name: {
-          "rf_profile_id": result.data.id,
+    rf_profile_ids: >-
+      {{ rf_profile_ids|default({}) | combine(
+        {
+          result.data.name: {
+            "rf_profile_id": result.data.id,
+          }
         }
-      }
-      ) }}'
+      ) }}
   loop: "{{ rf_profile_output.results }}"
   loop_control:
     loop_var: result

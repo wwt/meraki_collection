@@ -13,13 +13,14 @@
 
 - name: Add camera serial number information to dict
   ansible.builtin.set_fact:
-    camera_data: '{{ camera_data | default({}) | combine(
-      {
-        result.data[0].name: {
-          "serial": result.data[0].serial,
+    camera_data: >-
+      {{ camera_data | default({}) | combine(
+        {
+          result.data[0].name: {
+            "serial": result.data[0].serial,
+          }
         }
-      }
-      ) }}'
+      ) }}
   loop: "{{ device_results.results }}"
   loop_control:
     loop_var: result
@@ -51,13 +52,14 @@
 
 - name: Add camera quality profile ID to dict
   ansible.builtin.set_fact:
-    profile_data: '{{ profile_data | default({}) | combine(
-      {
-        result.json[0].name: {
-          "id": result.json[0].id,
+    profile_data: >-
+      {{ profile_data | default({}) | combine(
+        {
+          result.json[0].name: {
+            "id": result.json[0].id,
+          }
         }
-      }
-      ) }}'
+      ) }}
   loop: "{{ query_profile_result.results }}"
   loop_control:
     loop_var: result
@@ -116,13 +118,14 @@
 
 - name: Add Wireless Profile ID to dict
   ansible.builtin.set_fact:
-    wireless_profile_data: '{{ wireless_profile_data | default({}) | combine(
-      {
-        result.name: {
-          "id": result.id,
+    wireless_profile_data: >-
+      {{ wireless_profile_data | default({}) | combine(
+        {
+          result.name: {
+            "id": result.id,
+          }
         }
-      }
-      ) }}'
+      ) }}
   loop: "{{ query_wireless_profiles_result.results[0].json }}"
   loop_control:
     loop_var: result
@@ -181,13 +184,14 @@
 
 - name: Add MQTT Broker ID to dict
   ansible.builtin.set_fact:
-    broker_data: '{{ broker_data | default({}) | combine(
-      {
-        result.json[0].name: {
-          "id": result.json[0].id,
+    broker_data: >-
+      {{ broker_data | default({}) | combine(
+        {
+          result.json[0].name: {
+            "id": result.json[0].id,
+          }
         }
-      }
-      ) }}'
+      ) }}
   loop: "{{ query_broker_result.results }}"
   loop_control:
     loop_var: result

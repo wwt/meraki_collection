@@ -25,13 +25,14 @@
 
 - name: Build dict of Network Name to IDs
   ansible.builtin.set_fact:
-    network_ids: '{{ network_ids|default({}) | combine(
-      {
-        result.data.name: {
-          "network_id": result.data.id,
+    network_ids: >-
+      {{ network_ids | default({}) | combine(
+        {
+          result.data.name: {
+            "network_id": result.data.id,
+          }
         }
-      }
-      ) }}'
+      ) }}
   loop: "{{ network_results.results }}"
   loop_control:
     loop_var: result

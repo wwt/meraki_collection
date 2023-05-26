@@ -22,13 +22,14 @@
 
 - name: Add discovered brokers to dict
   ansible.builtin.set_fact:
-    mqtt_broker_ids: '{{ mqtt_broker_ids | default({}) | combine(
-      {
-        result.name: {
-          "broker_id": result.id,
+    mqtt_broker_ids: >-
+      {{ mqtt_broker_ids | default({}) | combine(
+        {
+          result.name: {
+            "broker_id": result.id,
+          }
         }
-      }
-      ) }}'
+      ) }}
   loop: "{{ broker_result.json }}"
   loop_control:
     loop_var: result
@@ -63,13 +64,14 @@
 
 - name: Add newly created broker to dict
   ansible.builtin.set_fact:
-    mqtt_broker_ids: '{{ mqtt_broker_ids | default({}) | combine(
+    mqtt_broker_ids: >-
+      {{ mqtt_broker_ids | default({}) | combine(
       {
         result.json.name: {
           "broker_id": result.json.id,
         }
       }
-      ) }}'
+      ) }}
   loop: "{{ create_broker_result.results }}"
   loop_control:
     loop_var: result

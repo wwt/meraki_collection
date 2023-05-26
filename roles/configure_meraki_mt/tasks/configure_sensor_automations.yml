@@ -44,6 +44,6 @@
       ansible.builtin.debug:
         msg: "ERROR: {{ api_result }}"
 
-- name: debug sensor creation output
+- name: Debug sensor creation output
   ansible.builtin.debug:
     var: api_result

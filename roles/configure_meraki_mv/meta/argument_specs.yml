@@ -461,9 +461,9 @@ argument_specs:
                     required: false
                     description: Video Quality
                     choices:
-                    - standard
-                    - enhanced
-                    - high
+                      - standard
+                      - enhanced
+                      - high
                   motion_based_retention:
                     type: bool
                     required: false
