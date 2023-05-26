@@ -1,0 +1,11 @@
+---
+- name: Configure Meraki Network
+  cisco.meraki.meraki_network:
+    auth_key: "{{ auth_key }}"
+    state: "{{ network.state }}"
+    org_name: "{{ network.organization }}"
+    net_name: "{{ network.name }}"
+    type: "{{ network.type }}"
+    timezone: "{{ network.timezone }}"
+    tags: "{{ network.tags }}"
+    enable_vlans: "{{ network.enable_vlans }}"

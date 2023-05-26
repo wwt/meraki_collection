@@ -1,0 +1,47 @@
+{
+    "enabled": "{{ automation.enabled }}",
+    "name": "{{ automation.name }}",
+    "icon": "{{ automation.icon }}",
+    "conditions": [
+        {% for condition in automation.conditions %}
+        {
+            "metric": "{{ condition.metric }}",
+            "button": {
+                "pressType": "{{ condition.button.press_type }}"
+            },
+            "serials": [
+                "{{ sensor_serial }}"
+            ]
+        }{{ "," if not loop.last }}
+        {% endfor %}
+    ],
+    "targets": [
+        {% for target in automation.targets %}
+        {
+            "target": "{{ target.target }}",
+            {% if target == "notification" %}
+            "notification": {
+                "recipient": "{{ target.notification.recipient }}",
+                "message": "{{ target.notification.message }}",
+                "type": "{{ target.notification.notification_type }}"
+            }
+            {% endif %}
+            {% if target == "snapshot" %}
+            "snapshot": {
+                "recipient": "{{ target.notification.recipient }}",
+                "camera": "{{ camera_serial }}",
+                "type": "{{ target.notification.notification_type }}"
+            }
+            {% endif %}
+            {% if target == "webhook" %}
+            "webhook": {
+                "id": "{{ webhook_id }}",
+                "message": "{{ target.webhook.message }}"
+            }
+            {% endif %}
+        }{{ "," if not loop.last }}
+        {% endfor %}
+    ]{% if sensor_schedule is defined %},
+    "scheduleId": "{{ sensor_schedule }}"
+    {% endif %}
+}

@@ -1,0 +1,29 @@
+---
+- name: Configure Meraki MR Bluetooth Settings
+  block:
+    - name: "Configure MR Bluetooth Settings for {{ ap.network }}"
+      ansible.builtin.uri:
+        url: "{{ dashboard_base_url }}/networks/{{ network_id }}/wireless/bluetooth/settings"
+        method: PUT
+        status_code: 200
+        headers:
+          Content-Type: application/json
+          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
+        body_format: json
+        body:
+          scanningEnabled: "{{ ap.bluetooth_settings.scanning_enabled | default(omit) }}"
+          advertisingEnabled: "{{ ap.bluetooth_settings.beaconing_enabled | default(omit) }}"
+          uuid: "{{ ap.bluetooth_settings.uuid | default(omit) }}"
+          majorMinorAssignmentMode: "{{ ap.bluetooth_settings.major_minor_assignment_mode | default(omit) }}"
+          major: "{{ ap.bluetooth_settings.major | default(omit) }}"
+          minor: "{{ ap.bluetooth_settings.minor | default(omit) }}"
+      changed_when: api_result.status == 200
+      until: api_result.status != 429
+      delay: 5
+      retries: 3
+      register: api_result
+      when: ap.bluetooth_settings is defined
+  rescue:
+    - name: Something went wrong...
+      ansible.builtin.debug:
+        msg: "ERROR: {{ api_result }}"

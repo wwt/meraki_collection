@@ -1,0 +1,508 @@
+---
+argument_specs:
+  # roles/configure_meraki_mv/main.yml entry point
+  main:
+    short_description: Role to configure Meraki MV Cameras
+    author: Nick Thompson <github/@nsthompson>
+    options:
+      auth_key:
+        type: str
+        required: true
+        description: Meraki API Auth Key
+      meraki_mv_configuration:
+        type: list
+        elements: dict
+        required: true
+        options:
+          organization:
+            type: str
+            required: true
+            description: Meraki Organization
+          network:
+            type: str
+            required: true
+            description: Meraki Network
+          camera_profiles:
+            type: dict
+            required: false
+            description: Camera Profile Configuration
+            options:
+              wireless:
+                type: list
+                elements: dict
+                required: false
+                description: Wireless Profiles
+                options:
+                  name:
+                    type: str
+                    required: false
+                    description: Profile Name
+                  state:
+                    type: str
+                    required: false
+                    description: Profile state
+                    choices:
+                      - present
+                      - absent
+                  auth_mode:
+                    type: str
+                    required: false
+                    description: SSID Auth Mode
+                    choices:
+                      - psk
+                      - 8021x-radius
+                  encryption_mode:
+                    type: str
+                    required: false
+                    description: Encryption Mode
+                    choices:
+                      - wpa
+                      - wpa-eap
+                  ssid:
+                    type: str
+                    required: false
+                    description: SSID
+                  psk:
+                    type: str
+                    required: false
+                    description: Wireless PSK
+                  username:
+                    type: str
+                    required: false
+                    description: Username when using 8021x-radius
+                  password:
+                    type: str
+                    required: false
+                    description: Password when using 8021x-radius
+              quality_and_retention:
+                type: list
+                elements: dict
+                required: false
+                description: Quality and Retention Profiles
+                options:
+                  name:
+                    type: str
+                    required: false
+                    description: Profile Name
+                  state:
+                    type: str
+                    required: false
+                    description: Profile State
+                    choices:
+                      - present
+                      - absent
+                  cloud_archive:
+                    type: bool
+                    required: false
+                    description: Enable Cloud Archive
+                  max_retention_days:
+                    type: int
+                    required: false
+                    description: Maximum Cloud Retention Days - Do not set a value to keep until storage is full
+                    choices:
+                      - 1
+                      - 2
+                      - 3
+                      - 4
+                      - 5
+                      - 6
+                      - 7
+                      - 8
+                      - 9
+                      - 10
+                      - 14
+                      - 30
+                      - 60
+                      - 90
+                  motion_based_retention:
+                    type: bool
+                    required: false
+                    description: Delete footage older than 3 days in which no motion was detected.  Does not apply to MV2.
+                  motion_detector_version:
+                    type: int
+                    required: false
+                    description: Motion Detector Version
+                    choices:
+                      - 1
+                      - 2
+                  restricted_bandwidth_mode:
+                    type: bool
+                    required: false
+                    description: Disable features that require additional bandwidth.  Does not apply to MV2.
+                  audio_recording:
+                    type: bool
+                    required: false
+                    description: Enable Audio Recording
+                  schedule_name:
+                    type: bool
+                    required: false
+                    description: Camera Recording Schedule Name
+                  video_settings:
+                    type: dict
+                    required: false
+                    description: Camera Specific Video Settings
+                    options:
+                      MV12_MV22_MV72:
+                        type: dict
+                        required: false
+                        description: Model Specific Settings
+                        options:
+                          quality:
+                            type: str
+                            required: false
+                            description: Quality Setting
+                            choices:
+                              - standard
+                              - enhanced
+                              - high
+                          resolution:
+                            type: str
+                            required: false
+                            description: Resolution Setting
+                            choices:
+                              - 1280x720
+                              - 1920x1080
+                      MV12WE:
+                        type: dict
+                        required: false
+                        description: Model Specific Settings
+                        options:
+                          quality:
+                            type: str
+                            required: false
+                            description: Quality Setting
+                            choices:
+                              - standard
+                              - enhanced
+                              - high
+                          resolution:
+                            type: str
+                            required: false
+                            description: Resolution Setting
+                            choices:
+                              - 1280x720
+                              - 1920x1080
+                      MV13:
+                        type: dict
+                        required: false
+                        description: Model Specific Settings
+                        options:
+                          quality:
+                            type: str
+                            required: false
+                            description: Quality Setting
+                            choices:
+                              - standard
+                              - enhanced
+                              - high
+                          resolution:
+                            type: str
+                            required: false
+                            description: Resolution Setting
+                            choices:
+                              - 1080x1080
+                              - 2688x1512
+                      MV21_MV71:
+                        type: dict
+                        required: false
+                        description: Model Specific Settings
+                        options:
+                          quality:
+                            type: str
+                            required: false
+                            description: Quality Setting
+                            choices:
+                              - standard
+                              - enhanced
+                              - high
+                          resolution:
+                            type: str
+                            required: false
+                            description: Resolution Setting
+                            choices:
+                              - 1280x720
+                      MV22X_MVMV72X:
+                        type: dict
+                        required: false
+                        description: Model Specific Settings
+                        options:
+                          quality:
+                            type: str
+                            required: false
+                            description: Quality Setting
+                            choices:
+                              - standard
+                              - enhanced
+                              - high
+                          resolution:
+                            type: str
+                            required: false
+                            description: Resolution Setting
+                            choices:
+                              - 1280x720
+                              - 1920x1080
+                              - 2688x1512
+                      MV32:
+                        type: dict
+                        required: false
+                        description: Model Specific Settings
+                        options:
+                          quality:
+                            type: str
+                            required: false
+                            description: Quality Setting
+                            choices:
+                              - standard
+                              - enhanced
+                              - high
+                          resolution:
+                            type: str
+                            required: false
+                            description: Resolution Setting
+                            choices:
+                              - 1080x1080
+                              - 2112x2112
+                      MV33:
+                        type: dict
+                        required: false
+                        description: Model Specific Settings
+                        options:
+                          quality:
+                            type: str
+                            required: false
+                            description: Quality Setting
+                            choices:
+                              - standard
+                              - enhanced
+                              - high
+                          resolution:
+                            type: str
+                            required: false
+                            description: Resolution Setting
+                            choices:
+                              - 1080x1080
+                              - 2112x2112
+                      MV52:
+                        type: dict
+                        required: false
+                        description: Model Specific Settings
+                        options:
+                          quality:
+                            type: str
+                            required: false
+                            description: Quality Setting
+                            choices:
+                              - standard
+                              - enhanced
+                              - high
+                          resolution:
+                            type: str
+                            required: false
+                            description: Resolution Setting
+                            choices:
+                              - 1280x720
+                              - 1920x1080
+                              - 2688x1512
+                              - 3840x2160
+                      MV63:
+                        type: dict
+                        required: false
+                        description: Model Specific Settings
+                        options:
+                          quality:
+                            type: str
+                            required: false
+                            description: Quality Setting
+                            choices:
+                              - standard
+                              - enhanced
+                              - high
+                          resolution:
+                            type: str
+                            required: false
+                            description: Resolution Setting
+                            choices:
+                              - 1920x1080
+                              - 2688x1512
+                      MV63X:
+                        type: dict
+                        required: false
+                        description: Model Specific Settings
+                        options:
+                          quality:
+                            type: str
+                            required: false
+                            description: Quality Setting
+                            choices:
+                              - standard
+                              - enhanced
+                              - high
+                          resolution:
+                            type: str
+                            required: false
+                            description: Resolution Setting
+                            choices:
+                              - 1920x1080
+                              - 2688x1512
+                              - 3840x2160
+                      MV93:
+                        type: dict
+                        required: false
+                        description: Model Specific Settings
+                        options:
+                          quality:
+                            type: str
+                            required: false
+                            description: Quality Setting
+                            choices:
+                              - standard
+                              - enhanced
+                              - high
+                          resolution:
+                            type: str
+                            required: false
+                            description: Resolution Setting
+                            choices:
+                              - 1080x1080
+                              - 2112x2112
+                      MV93X:
+                        type: dict
+                        required: false
+                        description: Model Specific Settings
+                        options:
+                          quality:
+                            type: str
+                            required: false
+                            description: Quality Setting
+                            choices:
+                              - standard
+                              - enhanced
+                              - high
+                          resolution:
+                            type: str
+                            required: false
+                            description: Resolution Setting
+                            choices:
+                              - 1080x1080
+                              - 2112x2112
+                              - 2880x2880
+                      MV2:
+                        type: dict
+                        required: false
+                        description: Model Specific Settings
+                        options:
+                          quality:
+                            type: str
+                            required: false
+                            description: Quality Setting
+                            choices:
+                              - standard
+                              - enhanced
+                              - high
+                          resolution:
+                            type: str
+                            required: false
+                            description: Resolution Setting
+                            choices:
+                              - 1280x720
+                              - 1920x1080
+          cameras:
+            type: list
+            elements: dict
+            required: false
+            description: Camera Settings
+            options:
+              name:
+                type: str
+                required: false
+                description: Camera Name
+              state:
+                type: str
+                required: false
+                description: Device State
+                choices:
+                  - present
+                  - absent
+              quality_and_retention:
+                type: dict
+                required: false
+                description: Quality and Retention Settings
+                options:
+                  profile_name:
+                    type: str
+                    required: false
+                    description: Camera Retention Profile Name
+                  motion_detector_version:
+                    type: int
+                    required: false
+                    description: Motion Detector Version
+                    choices:
+                      - 1
+                      - 2
+                  audio_recording:
+                    type: bool
+                    required: false
+                    description: Enable Audio Recording
+                  video_resolution:
+                    type: str
+                    required: false
+                    description: Video Resolution
+                    choices:
+                      - 1280x720
+                      - 1920x1080
+                      - 1080x1080
+                      - 2058x2058
+                      - 2112x2112
+                      - 2880x2880
+                      - 2688x1512
+                      - 3840x2160
+                  video_quality:
+                    type: str
+                    required: false
+                    description: Video Quality
+                    choices:
+                      - standard
+                      - enhanced
+                      - high
+                  motion_based_retention:
+                    type: bool
+                    required: false
+                    description: Delete footage older than 3 days in which no motion was detected.  Does not apply to MV2.
+                  restricted_bandwidth_mode:
+                    type: bool
+                    required: false
+                    description: Disable features that require additional bandwidth.  Does not apply to MV2.
+              wireless:
+                type: dict
+                required: false
+                description: Wireless Profiles
+                options:
+                  profile_1:
+                    type: str
+                    required: false
+                    description: Primary Wireless Profile Name
+                  profile_2:
+                    type: str
+                    required: false
+                    description: Secondary Wireless Profile Name
+                  backup_profile:
+                    type: str
+                    required: false
+                    description: Backup Wireless Profile Name
+              sense:
+                type: dict
+                required: false
+                description: Enable Camera Sense
+                options:
+                  enabled:
+                    type: bool
+                    required: false
+                    description: Enable Meraki Sense
+                  audio_detection:
+                    type: bool
+                    required: false
+                    description: Audio Detection Enabled
+                  mqtt_broker_name:
+                    type: str
+                    required: false
+                    description: MQTT Broker Name

@@ -1,0 +1,40 @@
+---
+#
+# Ansible Role to Claim Meraki Devices and Licenses into Meraki Org
+#
+# Copyright (C) 2023 World Wide Technology
+# All Rights Reserved
+#
+# Written by: Nick Thompson (github/@nsthompson)
+#
+- name: Get Meraki Org ID
+  cisco.meraki.meraki_organization:
+    auth_key: "{{ auth_key }}"
+    org_name: "{{ org_name }}"
+    state: query
+  delegate_to: localhost
+  register: org_results
+
+- name: Claim by Order Number
+  ansible.builtin.import_tasks: order.yml
+  vars:
+    org_id: "{{ org_results.data.id }}"
+  when: reg_type == "order" and order_ids is defined
+
+- name: Claim by License Key
+  ansible.builtin.import_tasks: license_key.yml
+  vars:
+    org_id: "{{ org_results.data.id }}"
+  when: reg_type == "license_key" and license_keys is defined
+
+- name: Claim License Renewal
+  ansible.builtin.import_tasks: license_renewal.yml
+  vars:
+    org_id: "{{ org_results.data.id }}"
+  when: reg_type == "license_renewal" and license_keys is defined
+
+- name: Claim by Serial Number
+  ansible.builtin.import_tasks: device.yml
+  vars:
+    org_id: "{{ org_results.data.id }}"
+  when: reg_type == "device" and serial_numbers is defined

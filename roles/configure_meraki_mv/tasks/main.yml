@@ -1,0 +1,68 @@
+---
+#
+# Ansible Role to Configure Meraki MV Cameras
+#
+# Copyright (C) 2023 World Wide Technology
+# All Rights Reserved
+#
+# Written by: Nick Thompson (github/@nsthompson)
+#
+
+- name: Get Meraki Network IDs
+  cisco.meraki.meraki_network:
+    auth_key: "{{ auth_key }}"
+    org_name: "{{ config.organization }}"
+    net_name: "{{ config.network }}"
+    state: query
+  loop: "{{ meraki_mv_configuration }}"
+  loop_control:
+    loop_var: config
+  register: network_results
+
+- name: Failure - Network DOES NOT exist
+  ansible.builtin.fail:
+    msg: Meraki Network is not provisioned
+  when: network_results.results[0].data.id is not defined
+
+- name: Build dict of Network Name to IDs
+  ansible.builtin.set_fact:
+    network_ids: >-
+      {{ network_ids | default({}) | combine(
+        {
+          result.data.name: {
+            "network_id": result.data.id,
+          }
+        }
+      ) }}
+  loop: "{{ network_results.results }}"
+  loop_control:
+    loop_var: result
+
+- name: Configure Camera Wireless Profiles
+  ansible.builtin.include_tasks: configure_wireless_profiles.yml
+  vars:
+    network_id: "{{ network_ids[config.network]['network_id'] }}"
+  loop: "{{ meraki_mv_configuration }}"
+  loop_control:
+    loop_var: config
+
+#
+#
+# QUALITY PROFILES CURRENTLY DO NOT WORK - OPENED TICKET WITH MERAKI
+#
+#
+# - name: Configure Camera Quality and Retention Profiles
+#   ansible.builtin.include_tasks: configure_quality_profiles.yml
+#   vars:
+#     network_id: "{{ network_ids[config.network]['network_id'] }}"
+#   loop: "{{ meraki_mv_configuration }}"
+#   loop_control:
+#     loop_var: config
+
+- name: Configure Camera Settings
+  ansible.builtin.include_tasks: configure_camera_settings.yml
+  vars:
+    network_id: "{{ network_ids[config.network]['network_id'] }}"
+  loop: "{{ meraki_mv_configuration }}"
+  loop_control:
+    loop_var: config

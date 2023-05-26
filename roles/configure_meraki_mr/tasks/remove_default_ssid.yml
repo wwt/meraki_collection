@@ -1,0 +1,24 @@
+---
+- name: Check for Default SSID
+  block:
+    - name: "Check for default SSID - {{ ap.network + '- wireless WiFi' }}"
+      cisco.meraki.meraki_mr_ssid:
+        auth_key: "{{ auth_key }}"
+        org_name: "{{ ap.organization }}"
+        net_name: "{{ ap.network }}"
+        name: "{{ ap.network }} - wireless WiFi"
+        state: query
+      register: ssid_result
+  rescue:
+    - name: Something went wrong...
+      ansible.builtin.debug:
+        msg: "SSID NOT FOUND - ERROR: {{ ssid_result.msg }}"
+
+- name: "Remove default SSID - {{ ap.network + '- wireless WiFi' }}"
+  cisco.meraki.meraki_mr_ssid:
+    auth_key: "{{ auth_key }}"
+    org_name: "{{ ap.organization }}"
+    net_name: "{{ ap.network }}"
+    name: "{{ ap.network }} - wireless WiFi"
+    state: absent
+  when: ssid_result.status == 200

@@ -1,0 +1,26 @@
+{
+    {% if profile_data[camera.quality_and_retention.profile_name].id is defined %}
+    {% set quality_profile_id = profile_data[camera.quality_and_retention.profile_name].id %}
+    {% endif %}
+    {% if quality_profile_id is defined %}
+    "profileId": "{{ quality_profile_id }}",
+    {% endif %}
+    {% if camera.quality_and_retention.motion_detector_version is defined and quality_profile_id is not defined %}
+    "motionDetectorVersion": "{{ camera.quality_and_retention.motion_detector_version }}",
+    {% endif %}
+    {% if camera.quality_and_retention.video_quality is defined and quality_profile_id is not defined %}
+    "quality": "{{ camera.quality_and_retention.video_quality }}",
+    {% endif %}
+    {% if camera.quality_and_retention.video_resolution is defined and quality_profile_id is not defined %}
+    "resolution": "{{ camera.quality_and_retention.video_resolution }}",
+    {% endif %}
+    {% if camera.quality_and_retention.audio_recording is defined and quality_profile_id is not defined %}
+    "audioRecordingEnabled": {{ camera.quality_and_retention.audio_recording }},
+    {% endif %}
+    {% if camera.quality_and_retention.motion_based_retention is defined and quality_profile_id is not defined %}
+    "motionBasedRetentionEnabled": {{ camera.quality_and_retention.motion_based_retention }},
+    {% endif %}
+    {% if camera.quality_and_retention.restricted_bandwidth_mode is defined and quality_profile_id is not defined %}
+    "restrictedBandwidthModeEnabled": {{ camera.quality_and_retention.restricted_bandwidth_mode }}
+    {% endif %}
+}

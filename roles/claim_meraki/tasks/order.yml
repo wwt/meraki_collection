@@ -1,0 +1,23 @@
+---
+- name: Register Meraki Devices
+  block:
+    - name: Registering Meraki Device by Order Number
+      ansible.builtin.uri:
+        url: "{{ dashboard_base_url }}/organizations/{{ org_id }}/claim"
+        method: POST
+        status_code: 200
+        headers:
+          Content-Type: application/json
+          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
+        body_format: json
+        body:
+          orders: "{{ order_ids }}"
+      changed_when: api_result.status == 200
+      until: api_result.status != 429
+      delay: 5
+      retries: 3
+      register: api_result
+  rescue:
+    - name: Something went wrong...
+      ansible.builtin.debug:
+        msg: "ERROR: {{ api_result }}"

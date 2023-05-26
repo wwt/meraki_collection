@@ -1,0 +1,49 @@
+---
+#
+#
+# needs work - API is not exposed
+#
+#
+#
+- name: Query Device Serial Number for {{ sensor.name }}
+  cisco.meraki.meraki_device:
+    auth_key: "{{ auth_key }}"
+    org_name: "{{ sensor.organization }}"
+    net_name: "{{ sensor.network }}"
+    hostname: "{{ sensor.name }}"
+    state: query
+  register: device_results
+
+- name: Set Facts
+  ansible.builtin.set_fact:
+    sensor_serial: "{{ device_results['data'][0]['serial'] }}"
+
+- name: Configure Meraki MT Sensor Automations
+  block:
+    - name: "Configure Sensor Automation for {{ sensor.name }}"
+      ansible.builtin.uri:
+        url: "{{ dashboard_base_url }}/networks/{{ network_id }}/sensor/automations"
+        method: POST
+        status_code: 200
+        headers:
+          Content-Type: application/json
+          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
+        body_format: json
+        body: "{{ lookup('template', 'templates/sensor_automations.j2') }}"
+      changed_when: api_result.status == 201
+      until: api_result.status != 429
+      delay: 5
+      retries: 3
+      register: api_result
+      when: sensor.automations is defined
+      loop: "{{ sensor.automations }}"
+      loop_control:
+        loop_var: automation
+  rescue:
+    - name: Something went wrong...
+      ansible.builtin.debug:
+        msg: "ERROR: {{ api_result }}"
+
+- name: Debug sensor creation output
+  ansible.builtin.debug:
+    var: api_result

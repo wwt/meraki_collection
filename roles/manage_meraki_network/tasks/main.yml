@@ -1,0 +1,29 @@
+---
+#
+# Ansible Role to Manage Meraki Networks
+#
+# Copyright (C) 2023 World Wide Technology
+# All Rights Reserved
+#
+# Written by: Nick Thompson (github/@nsthompson)
+#
+- name: Configure Meraki network
+  ansible.builtin.include_tasks: configure_network.yml
+  loop: "{{ meraki_networks }}"
+  loop_control:
+    loop_var: network
+  when: network.state == "present"
+
+- name: Manage Network Devices
+  ansible.builtin.include_tasks: manage_devices.yml
+  loop: "{{ meraki_networks }}"
+  loop_control:
+    loop_var: network
+  when: network.state == "present"
+
+- name: Remove Meraki Network and Devices
+  ansible.builtin.include_tasks: remove_network.yml
+  loop: "{{ meraki_networks }}"
+  loop_control:
+    loop_var: network
+  when: network.state == "absent"

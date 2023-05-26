@@ -1,0 +1,28 @@
+---
+- name: Manage Network Devices
+  cisco.meraki.meraki_device:
+    auth_key: "{{ auth_key }}"
+    org_name: "{{ network.organization }}"
+    net_name: "{{ network.name }}"
+    serial: "{{ device.serial }}"
+    state: "{{ device.state }}"
+  loop: "{{ network.devices }}"
+  loop_control:
+    loop_var: device
+
+# Meraki requires a second API call to update name and address information
+
+- name: Update Network Devices
+  cisco.meraki.meraki_device:
+    auth_key: "{{ auth_key }}"
+    org_name: "{{ network.organization }}"
+    net_name: "{{ network.name }}"
+    name: "{{ device.name }}"
+    serial: "{{ device.serial }}"
+    address: "{{ network.address | default(omit) }}"
+    move_map_marker: "{{ 'true' if network.address | default(omit) }}"
+    state: "{{ device.state }}"
+  loop: "{{ network.devices }}"
+  loop_control:
+    loop_var: device
+  when: device.state == "present"

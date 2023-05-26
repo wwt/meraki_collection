@@ -1,0 +1,16 @@
+{
+    {% if camera.sense.enabled is defined %}
+    "senseEnabled": {{ camera.sense.enabled }},
+    {% endif %}
+    {% if camera.sense.audio_detecton is defined %}
+    "audioDetection: {
+        "enabled": {{ camera.sense.audio_detection }}
+    },
+    {% endif %}
+    {% if broker_data[camera.sense.mqtt_broker_name].id is defined %}
+    {% set mqtt_broker_id = broker_data[camera.sense.mqtt_broker_name].id %}
+    {% endif %}
+    {% if mqtt_broker_id is defined %}
+    "mqttBrokerId": "{{ mqtt_broker_id }}"
+    {% endif %}
+}

@@ -1,0 +1,15 @@
+{
+    "name": "{{ profile.name }}",
+    "ssid": {
+        "name": "{{ profile.ssid }}",
+        "authMode": "{{ profile.auth_mode }}",
+        "encryptionMode": "{{ profile.encryption_mode }}"{% if profile.auth_mode == "psk" %},
+        "psk": "{{ profile.psk }}"
+        {% endif %}
+    }{% if profile.auth_mode == "8021x-radius" %},
+    "identity": {
+        "username": "{{ profile.username }}",
+        "password": "{{ profile.password }}"
+    }
+    {% endif %}
+}

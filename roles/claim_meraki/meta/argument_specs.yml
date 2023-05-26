@@ -1,0 +1,43 @@
+---
+argument_specs:
+  # roles/claim_meraki/main.yml entry point
+  main:
+    short_description: Role to claim meraki devices by order, serial, or license
+    author: Nick Thompson <github/@nsthompson>
+    options:
+      dashboard_base_url:
+        type: str
+        required: true
+        description: Meraki Dashboard Base URL
+      auth_key:
+        type: str
+        required: true
+        description: Meraki API Auth Key
+      org_name:
+        type: str
+        required: true
+        description: Meraki Dashboard Org Name
+      reg_type:
+        type: str
+        required: true
+        description: Meraki Dashboard Claim Type
+        choices:
+          - device
+          - license_key
+          - license_renewal
+          - order
+      order_ids:
+        type: list
+        elements: str
+        required: false
+        description: Meraki Order Numbers
+      license_keys:
+        type: list
+        elements: str
+        required: false
+        description: Meraki License Keys
+      serial_numbers:
+        type: list
+        elements: str
+        required: false
+        description: Meraki Device Serial Numbers

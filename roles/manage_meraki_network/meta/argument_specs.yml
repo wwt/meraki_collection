@@ -1,0 +1,77 @@
+---
+argument_specs:
+  # roles/manage_meraki_network/main.yml entry point
+  main:
+    short_description: Role to manage Meraki networks
+    author: Nick Thompson <github/@nsthompson>
+    options:
+      auth_key:
+        type: str
+        required: true
+        description: Meraki API Auth Key
+      meraki_networks:
+        type: list
+        required: true
+        description: Meraki network definitions
+        elements: dict
+        options:
+          name:
+            type: str
+            required: true
+            description: Meraki Network Name
+          organization:
+            type: str
+            required: true
+            description: Meraki Organization Name
+          type:
+            type: list
+            required: true
+            description: Meraki Device Types
+            choices:
+              - appliance
+              - camera
+              - wireless
+              - switch
+              - cellular
+          timezone:
+            type: str
+            required: true
+            description: Timezone in TZ format
+          enable_vlans:
+            type: bool
+            required: false
+            description: Enable VLANs on Network
+          state:
+            type: str
+            required: true
+            description: Ansible State
+            choices:
+              - present
+              - absent
+          tags:
+            type: str
+            required: false
+            description: Meraki Dashboard Tags (CSV list)
+          address:
+            type: str
+            required: false
+            description: Device Address
+          devices:
+            type: list
+            required: true
+            description: Meraki Devices to add to Network
+            elements: dict
+            options:
+              name:
+                required: true
+                description: Device Name
+              serial:
+                required: true
+                description: Meraki Serial Number
+              state:
+                type: str
+                required: true
+                description: Ansible State
+                choices:
+                  - present
+                  - absent
