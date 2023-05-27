@@ -6,7 +6,7 @@ This role is used to configure Meraki MX Firewalls
 
 ## Using this Role
 
-To use this role, you will need to have a variable named `meraki_mx_configuration` that adheres to the following argument spec:
+To use this role, you will need to provide `auth_key` and have a variable named `meraki_mx_configuration` that adheres to the following argument spec:
 
 ![Argument Spec](../../assets/configure_meraki_mx.svg)
 
