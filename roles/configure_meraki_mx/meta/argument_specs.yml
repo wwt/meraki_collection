@@ -5,6 +5,10 @@ argument_specs:
     short_description: Role to configure Meraki MX Appliances
     author: Nick Thompson <github/@nsthompson>
     options:
+      dashboard_base_url:
+        type: str
+        required: true
+        description: Meraki Dashboard Base URL
       auth_key:
         type: str
         required: true
