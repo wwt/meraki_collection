@@ -1,0 +1,15 @@
+galaxy_info:
+  author: Nick Thompson
+  description: Claim Meraki Orders, Licenses, and Devices into the Meraki Dashboard
+  company: World Wide Technology
+  license: GPL-3.0-or-later
+  min_ansible_version: ">=2.11.0"
+  galaxy_tags:
+    - networking
+    - infrastructure
+    - wireless
+    - firewall
+    - switching
+    - cisco
+    - meraki
+dependencies: []
