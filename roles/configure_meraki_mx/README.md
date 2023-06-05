@@ -6,19 +6,19 @@ This role is used to configure Meraki MX Firewalls
 
 ## Using this Role
 
-To use this role, you will need to provide `auth_key` and have a variable named `meraki_mx_configuration` that adheres to the following argument spec:
+To use this role, you will need to provide `dashboard_base_url`, `auth_key` and have a variable named `meraki_mx_configuration` that adheres to the following argument spec:
 
 ![Argument Spec](../../assets/configure_meraki_mx.svg)
 
-### Example `meraki_mx_configuration`
+### Example `meraki_mx_configuration` Data Model
 
 ```yaml
 ---
 meraki_mx_configuration:
   appliances:
     - name: demo-mx68
-      organization: WWT Automation Team
-      network: Meraki-Demo
+      organization: ORG NAME
+      network: NETWORK NAME
       deployment_settings:
         deployment_mode: routed
         client_tracking: MAC address
@@ -128,7 +128,6 @@ meraki_mx_configuration:
                 - CN
                 - RU
                 - KP
-
 ```
 
 ## Contributors
