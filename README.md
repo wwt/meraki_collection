@@ -16,6 +16,15 @@ The following roles are included in this collection:
 * configure_meraki_mx - Role to configure Meraki MX Firewalls
 * manage_meraki_network - Role to configure Meraki networks and claim devices into network inventory
 
+## Common Variables
+
+> :warning: The following variables are common and required for most of the roles:
+
+```yaml
+dashboard_base_url: https://api.meraki.com/api/v1
+auth_key: <YOUR-DASHBOARD-API-KEY>
+```
+
 ## Contributors
 
 Nick Thompson <https://github.com/nsthompson>
