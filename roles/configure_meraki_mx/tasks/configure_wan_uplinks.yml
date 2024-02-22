@@ -10,7 +10,7 @@
 
 - name: Configure Meraki MX WAN Uplinks
   block:
-    - name: "Configure MX WAN Uplinks for {{ appliance.name }}"
+    - name: Configure MX WAN Uplinks for {{ appliance.name }}
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/devices/{{ device_results['data'][0]['serial'] }}/appliance/uplinks/settings"
         method: PUT

@@ -20,7 +20,7 @@
 
 - name: Configure Meraki MT Sensor Automations
   block:
-    - name: "Configure Sensor Automation for {{ sensor.name }}"
+    - name: Configure Sensor Automation for {{ sensor.name }}
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/networks/{{ network_id }}/sensor/automations"
         method: POST

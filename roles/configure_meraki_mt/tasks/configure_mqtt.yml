@@ -1,7 +1,7 @@
 ---
 - name: Query for existing MQTT brokers
   block:
-    - name: "Query for existing MQTT brokers on Network {{ config.network }}"
+    - name: Query for existing MQTT brokers on Network {{ config.network }}
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/networks/{{ network_id }}/mqttBrokers"
         method: GET
@@ -37,7 +37,7 @@
 
 - name: Configure MQTT Broker
   block:
-    - name: "Configure MQTT Broker for Network {{ config.network }}"
+    - name: Configure MQTT Broker for Network {{ config.network }}
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/networks/{{ network_id }}/mqttBrokers"
         method: POST
@@ -79,7 +79,7 @@
 
 - name: Delete MQTT Broker
   block:
-    - name: "Deleting MQTT Broker for Network {{ config.network }}"
+    - name: Deleting MQTT Broker for Network {{ config.network }}
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/networks/{{ network_id }}/mqttBrokers/{{ mqtt_broker_ids[broker.name].broker_id }}"
         method: DELETE
@@ -104,7 +104,7 @@
 
 - name: Enable MQTT Broker
   block:
-    - name: "Enabling MQTT Broker for Network {{ config.network }}"
+    - name: Enabling MQTT Broker for Network {{ config.network }}
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/networks/{{ network_id }}/sensor/mqttBrokers/{{ mqtt_broker_ids[broker.name].broker_id }}"
         method: PUT
