@@ -1,5 +1,5 @@
 ---
-- name: "Configuring General Wireless Settings for {{ ap.network }}"
+- name: Configuring General Wireless Settings for {{ ap.network }}
   cisco.meraki.meraki_mr_settings:
     auth_key: "{{ auth_key }}"
     org_name: "{{ ap.organization }}"

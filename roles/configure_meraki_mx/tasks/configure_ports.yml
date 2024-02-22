@@ -1,5 +1,5 @@
 ---
-- name: "Configure Meraki MX Ports for {{ appliance.name }}"
+- name: Configure Meraki MX Ports for {{ appliance.name }}
   cisco.meraki.meraki_mx_l2_interface:
     auth_key: "{{ auth_key }}"
     org_name: "{{ appliance.organization }}"

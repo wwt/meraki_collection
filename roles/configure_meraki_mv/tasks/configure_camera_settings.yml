@@ -94,7 +94,7 @@
 
 - name: Query Network Camera Wireless Profiles
   block:
-    - name: "Query Network Camera Wireless Profiles on {{ config.network }}"
+    - name: Query Network Camera Wireless Profiles on {{ config.network }}
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/networks/{{ network_id }}/camera/wirelessProfiles"
         method: GET

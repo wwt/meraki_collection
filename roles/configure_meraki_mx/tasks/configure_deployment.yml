@@ -1,7 +1,7 @@
 ---
 - name: Configure Meraki MX Deployment Settings
   block:
-    - name: "Configure MX Deployment Settings for {{ appliance.name }}"
+    - name: Configure MX Deployment Settings for {{ appliance.name }}
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/networks/{{ network_id }}/appliance/settings"
         method: PUT

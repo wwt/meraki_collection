@@ -1,7 +1,7 @@
 ---
 - name: Query for existing Camera Wireless Profiles
   block:
-    - name: "Query for existing Camera Wireless Profiles on Network {{ config.network }}"
+    - name: Query for existing Camera Wireless Profiles on Network {{ config.network }}
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/networks/{{ network_id }}/camera/wirelessProfiles"
         method: GET
@@ -37,7 +37,7 @@
 
 - name: Update Camera Wireless Profiles
   block:
-    - name: "Update Camera Wireless Profiles for Network {{ config.network }}"
+    - name: Update Camera Wireless Profiles for Network {{ config.network }}
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/networks/{{ network_id }}/camera/wirelessProfiles/{{ wireless_profile_ids[profile.name]['profile_id'] }}"
         method: PUT
@@ -64,7 +64,7 @@
 
 - name: Create Camera Wireless Profiles
   block:
-    - name: "Create Camera Wireless Profiles for Network {{ config.network }}"
+    - name: Create Camera Wireless Profiles for Network {{ config.network }}
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/networks/{{ network_id }}/camera/wirelessProfiles"
         method: POST
@@ -91,7 +91,7 @@
 
 - name: Delete Camera Wireless Profiles
   block:
-    - name: "Delete Camera Wireless Profile on Network {{ config.network }}"
+    - name: Delete Camera Wireless Profile on Network {{ config.network }}
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/networks/{{ network_id }}/camera/wirelessProfiles/{{ wireless_profile_ids[profile.name]['profile_id'] }}"
         method: DELETE

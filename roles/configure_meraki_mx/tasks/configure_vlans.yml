@@ -1,5 +1,5 @@
 ---
-- name: "Configure MX VLANs for {{ appliance.name }}"
+- name: Configure MX VLANs for {{ appliance.name }}
   cisco.meraki.meraki_mx_vlan:
     auth_key: "{{ auth_key }}"
     org_name: "{{ appliance.organization }}"

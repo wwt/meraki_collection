@@ -1,7 +1,7 @@
 ---
 - name: Query for existing Camera Quality Profiles
   block:
-    - name: "Query for existing Camera Quality Profiles on Network {{ config.network }}"
+    - name: Query for existing Camera Quality Profiles on Network {{ config.network }}
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/networks/{{ network_id }}/camera/qualityRetentionProfiles"
         method: GET
@@ -37,7 +37,7 @@
 
 - name: Update Camera Quality Profiles
   block:
-    - name: "Update Camera Quality Profiles for Network {{ config.network }}"
+    - name: Update Camera Quality Profiles for Network {{ config.network }}
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/networks/{{ network_id }}/camera/qualityRetentionProfiles/{{ quality_profile_ids[profile.name]['profile_id'] }}"
         method: PUT
@@ -64,7 +64,7 @@
 
 - name: Create Camera Quality Profiles
   block:
-    - name: "Create Camera Quality Profiles for Network {{ config.network }}"
+    - name: Create Camera Quality Profiles for Network {{ config.network }}
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/networks/{{ network_id }}/camera/qualityRetentionProfiles"
         method: POST
@@ -91,7 +91,7 @@
 
 - name: Delete Camera Wireless Profiles
   block:
-    - name: "Delete Camera Wireless Profile on Network {{ config.network }}"
+    - name: Delete Camera Wireless Profile on Network {{ config.network }}
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/networks/{{ network_id }}/camera/qualityRetentionProfiles/{{ quality_profile_ids[profile.name]['profile_id'] }}"
         method: DELETE

@@ -1,7 +1,7 @@
 ---
 - name: Configure Meraki MX Advanced Malware Protection Settings
   block:
-    - name: "Configure MX Advanced Malware Protection Settings for {{ appliance.name }}"
+    - name: Configure MX Advanced Malware Protection Settings for {{ appliance.name }}
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/networks/{{ network_id }}/appliance/security/malware"
         method: PUT
@@ -24,12 +24,12 @@
       ansible.builtin.debug:
         msg: "ERROR: {{ api_result }}"
 
-- name: "Configure Meraki MX Intrusion Detection and Prevention Settings for {{ appliance.name }}"
+- name: Configure Meraki MX Intrusion Detection and Prevention Settings for {{ appliance.name }}
   cisco.meraki.meraki_mx_intrusion_prevention:
     auth_key: "{{ auth_key }}"
     org_name: "{{ appliance.organization }}"
     net_name: "{{ appliance.network }}"
-    state: "present"
+    state: present
     mode: "{{ appliance.threat_protection.intrusion.mode }}"
     ids_rulesets: "{{ appliance.threat_protection.intrusion.rulesets }}"
     protected_networks: "{{ appliance.threat_protection.intrusion.protected_networks | default(omit) }}"
