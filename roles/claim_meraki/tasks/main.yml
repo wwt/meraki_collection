@@ -8,33 +8,29 @@
 # Written by: Nick Thompson (github/@nsthompson)
 #
 - name: Get Meraki Org ID
-  cisco.meraki.meraki_organization:
-    auth_key: "{{ auth_key }}"
-    org_name: "{{ org_name }}"
-    state: query
+  cisco.meraki.organizations_info:
+    meraki_api_key: "{{ auth_key }}"
   delegate_to: localhost
   register: org_results
 
+- name: Get org_id for org_name
+  ansible.builtin.set_fact:
+    org_id: "{{ org_results | community.general.json_query(org_id_query) | first }}"
+  vars:
+    org_id_query: "meraki_response[?name=='{{ org_name }}'].id"
+
 - name: Claim by Order Number
   ansible.builtin.import_tasks: order.yml
-  vars:
-    org_id: "{{ org_results.data.id }}"
   when: reg_type == "order" and order_ids is defined
 
 - name: Claim by License Key
   ansible.builtin.import_tasks: license_key.yml
-  vars:
-    org_id: "{{ org_results.data.id }}"
   when: reg_type == "license_key" and license_keys is defined
 
 - name: Claim License Renewal
   ansible.builtin.import_tasks: license_renewal.yml
-  vars:
-    org_id: "{{ org_results.data.id }}"
   when: reg_type == "license_renewal" and license_keys is defined
 
 - name: Claim by Serial Number
   ansible.builtin.import_tasks: device.yml
-  vars:
-    org_id: "{{ org_results.data.id }}"
   when: reg_type == "device" and serial_numbers is defined
