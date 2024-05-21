@@ -1,11 +1,10 @@
 ---
 - name: Configure Meraki Network
-  cisco.meraki.meraki_network:
-    auth_key: "{{ auth_key }}"
+  cisco.meraki.networks:
+    meraki_api_key: "{{ auth_key }}"
     state: "{{ network.state }}"
-    org_name: "{{ network.organization }}"
-    net_name: "{{ network.name }}"
-    type: "{{ network.type }}"
-    timezone: "{{ network.timezone }}"
+    organizationId: "{{ query('wwt.meraki.fetch', 'org_id', org_name=network.organization, meraki_api_key=auth_key) }}"
+    name: "{{ network.name }}"
+    productTypes: "{{ network.type }}"
+    timeZone: "{{ network.timezone }}"
     tags: "{{ network.tags }}"
-    enable_vlans: "{{ network.enable_vlans }}"

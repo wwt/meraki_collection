@@ -7,17 +7,9 @@
 #
 # Written by: Nick Thompson (github/@nsthompson)
 #
-- name: Get Meraki Org ID
-  cisco.meraki.organizations_info:
-    meraki_api_key: "{{ auth_key }}"
-  delegate_to: localhost
-  register: org_results
-
-- name: Get org_id for org_name
+- name: Get org_id of org_name
   ansible.builtin.set_fact:
-    org_id: "{{ org_results | community.general.json_query(org_id_query) | first }}"
-  vars:
-    org_id_query: "meraki_response[?name=='{{ org_name }}'].id"
+    org_id: "{{ query('wwt.meraki.fetch', 'org_id', org_name=org_name, meraki_api_key=auth_key) }}"
 
 - name: Claim by Order Number
   ansible.builtin.import_tasks: order.yml
