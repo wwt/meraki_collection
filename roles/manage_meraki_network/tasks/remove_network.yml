@@ -6,7 +6,7 @@
 - name: Remove Devices
   cisco.meraki.networks_devices_remove:
     meraki_api_key: "{{ auth_key }}"
-    networkId: "{{ query('wwt.meraki.fetch', 'network_id', org_name=network.organization, meraki_api_key=auth_key, network_name=network.name) }}"
+    networkId: "{{ lookup('wwt.meraki.fetch', 'network_id', org_name=network.organization, meraki_api_key=auth_key, network_name=network.name) }}"
     serial: "{{ device }}"
   loop: "{{ device_serials }}"
   loop_control:
@@ -17,5 +17,5 @@
   cisco.meraki.networks:
     meraki_api_key: "{{ auth_key }}"
     state: "{{ network.state }}"
-    networkId: "{{ query('wwt.meraki.fetch', 'network_id', org_name=network.organization, meraki_api_key=auth_key, network_name=network.name) }}"
+    networkId: "{{ lookup('wwt.meraki.fetch', 'network_id', org_name=network.organization, meraki_api_key=auth_key, network_name=network.name) }}"
   when: network.state == "absent"

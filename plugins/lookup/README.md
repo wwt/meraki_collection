@@ -18,7 +18,7 @@ Use `wwt.meraki.fetch` to query the organizationId of a given Organization
   cisco.meraki.networks:
     meraki_api_key: "{{ auth_key }}"
     state: "{{ network.state }}"
-    organizationId: "{{ query('wwt.meraki.fetch', 'org_id', org_name=network.organization, meraki_api_key=auth_key) }}"
+    organizationId: "{{ lookup('wwt.meraki.fetch', 'org_id', org_name=network.organization, meraki_api_key=auth_key) }}"
     name: "{{ network.name }}"
     productTypes: "{{ network.type }}"
     timeZone: "{{ network.timezone }}"
@@ -32,7 +32,7 @@ Use `wwt.meraki.fetch` to query the networkId of a given Network Name and Organi
 - name: Claim Devices
   cisco.meraki.networks_devices_claim:
     meraki_api_key: "{{ auth_key }}"
-    networkId: "{{ query('wwt.meraki.fetch', 'network_id', org_name=network.organization, meraki_api_key=auth_key, network_name=network.name) }}"
+    networkId: "{{ lookup('wwt.meraki.fetch', 'network_id', org_name=network.organization, meraki_api_key=auth_key, network_name=network.name) }}"
     serials: "{{ add_present_devices }}"
   when: add_present_devices is defined
 ```

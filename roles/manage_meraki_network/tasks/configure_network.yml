@@ -3,7 +3,7 @@
   cisco.meraki.networks:
     meraki_api_key: "{{ auth_key }}"
     state: "{{ network.state }}"
-    organizationId: "{{ query('wwt.meraki.fetch', 'org_id', org_name=network.organization, meraki_api_key=auth_key) }}"
+    organizationId: "{{ lookup('wwt.meraki.fetch', 'org_id', org_name=network.organization, meraki_api_key=auth_key) }}"
     name: "{{ network.name }}"
     productTypes: "{{ network.type }}"
     timeZone: "{{ network.timezone }}"
