@@ -13,7 +13,7 @@
     loop_var: device
   when: device_serials is defined
 
-- name: Configure Meraki Network
+- name: Remove Meraki Network
   cisco.meraki.networks:
     meraki_api_key: "{{ auth_key }}"
     state: "{{ network.state }}"

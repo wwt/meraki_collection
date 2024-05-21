@@ -46,6 +46,14 @@ Use `wwt.meraki.fetch` to query the device serial numbers belonging to a given n
      device_serials: "{{ query('wwt.meraki.fetch', 'network_devices', network_name=network.name, org_name=network.organization, meraki_api_key=auth_key) }}"
 ```
 
+Use `wwt.meraki.fetch` to query for a specific device serial number belong to a given network Name and Organization
+
+```yaml
+- name: Query Device Serial Number for {{ appliance.name }}
+  ansible.builtin.set_fact:
+    device_serial: "{{ lookup('wwt.meraki.fetch', 'network_devices', org_name=meraki_mx_configuration.network.organization, meraki_api_key=auth_key, network_name=meraki_mx_configuration.network.name, device_name=appliance.name) }}"
+```
+
 ## Contributors
 
 Nick Thompson <https://github.com/nsthompson>

@@ -7,62 +7,28 @@
 #
 # Written by: Nick Thompson (github/@nsthompson)
 #
-- name: Get Meraki Network IDs
-  cisco.meraki.meraki_network:
-    auth_key: "{{ auth_key }}"
-    org_name: "{{ appliance.organization }}"
-    net_name: "{{ appliance.network }}"
-    state: query
-  loop: "{{ meraki_mx_configuration.appliances }}"
-  loop_control:
-    loop_var: appliance
-  register: network_results
-
-- name: Failure - Network DOES NOT exist
-  ansible.builtin.fail:
-    msg: Meraki Network is not provisioned
-  when: network_results.results[0].data.id is not defined
-
-- name: Build dict of Network Name to IDs
+- name: Look Up Meraki MX Appliance Network ID
   ansible.builtin.set_fact:
-    network_ids: >-
-      {{ network_ids | default({}) | combine(
-        {
-          result.data.name: {
-            "network_id": result.data.id,
-          }
-        }
-      ) }}
-  loop: "{{ network_results.results }}"
-  loop_control:
-    loop_var: result
+    network_id: "{{ lookup('wwt.meraki.fetch', 'network_id', org_name=meraki_mx_configuration.network.organization, meraki_api_key=auth_key, network_name=meraki_mx_configuration.network.name) }}"
 
 - name: Configure Meraki MX Deployment Settings
   ansible.builtin.include_tasks: configure_deployment.yml
-  vars:
-    network_id: "{{ network_ids[appliance.network]['network_id'] }}"
   loop: "{{ meraki_mx_configuration.appliances }}"
   loop_control:
     loop_var: appliance
 
 - name: Configure Meraki MX WAN Uplinks
   ansible.builtin.include_tasks: configure_wan_uplinks.yml
-  vars:
-    network_id: "{{ network_ids[appliance.network]['network_id'] }}"
   loop: "{{ meraki_mx_configuration.appliances }}"
   loop_control:
     loop_var: appliance
 
 - name: Configure Meraki MX Network VLAN Settings
-  cisco.meraki.meraki_mx_network_vlan_settings:
-    auth_key: "{{ auth_key }}"
-    org_name: "{{ appliance.organization }}"
-    net_name: "{{ appliance.network }}"
-    vlans_enabled: "{{ appliance.lan_settings.enable_vlans }}"
+  cisco.meraki.networks_appliance_vlans_settings:
+    meraki_api_key: "{{ auth_key }}"
+    networkId: "{{ network_id }}"
     state: present
-  loop: "{{ meraki_mx_configuration.appliances }}"
-  loop_control:
-    loop_var: appliance
+    vlansEnabled: "{{ meraki_mx_configuration.network.lan_settings.enable_vlans }}"
 
 - name: Configure Meraki MX VLANs
   ansible.builtin.include_tasks: configure_vlans.yml
@@ -78,8 +44,6 @@
 
 - name: Configure Threat Protection
   ansible.builtin.include_tasks: configure_threat_protection.yml
-  vars:
-    network_id: "{{ network_ids[appliance.network]['network_id'] }}"
   loop: "{{ meraki_mx_configuration.appliances }}"
   loop_control:
     loop_var: appliance

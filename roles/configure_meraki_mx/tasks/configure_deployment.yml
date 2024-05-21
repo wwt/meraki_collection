@@ -1,27 +1,11 @@
 ---
 - name: Configure Meraki MX Deployment Settings
-  block:
-    - name: Configure MX Deployment Settings for {{ appliance.name }}
-      ansible.builtin.uri:
-        url: "{{ dashboard_base_url }}/networks/{{ network_id }}/appliance/settings"
-        method: PUT
-        status_code: 200
-        headers:
-          Content-Type: application/json
-          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
-        body_format: json
-        body:
-          clientTrackingMethod: "{{ appliance.deployment_settings.client_tracking }}"
-          deploymentMode: "{{ appliance.deployment_settings.deployment_mode }}"
-          dynamicDns:
-            prefix: "{{ appliance.deployment_settings.dynamic_dns.prefix }}"
-            enabled: "{{ appliance.deployment_settings.dynamic_dns.enabled }}"
-      changed_when: api_result.status == 200
-      until: api_result.status != 429
-      delay: 5
-      retries: 3
-      register: api_result
-  rescue:
-    - name: Something went wrong...
-      ansible.builtin.debug:
-        msg: "ERROR: {{ api_result }}"
+  cisco.meraki.networks_appliance_settings:
+    meraki_api_key: "{{ auth_key }}"
+    networkId: "{{ network_id }}"
+    state: present
+    clientTrackingMethod: "{{ appliance.deployment_settings.client_tracking }}"
+    deploymentMode: "{{ appliance.deployment_settings.deployment_mode }}"
+    dynamicDns:
+      prefix: "{{ appliance.deployment_settings.dynamic_dns.prefix }}"
+      enabled: "{{ appliance.deployment_settings.dynamic_dns.enabled }}"

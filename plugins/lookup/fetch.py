@@ -46,6 +46,11 @@ DOCUMENTATION = r"""
         - Meraki Network Name
       type: string
       required: False
+    device_name:
+      description:
+        - Meraki Device Name
+      type: string
+      required: False
   notes:
     - Returns fetched information
 """
@@ -133,11 +138,6 @@ class Fetch():
         organization_id = self.organization_id
         network_name = self.kwargs.get("network_name")
 
-        if network_name is None:
-            raise AnsibleError(
-                'network_name is required.'
-            )
-
         results = []
 
         if network_name is not None:
@@ -158,6 +158,10 @@ class Fetch():
                 raise AnsibleError(
                     f'network with name "{network_name}" cannot be found.'
                 )
+        else:
+            raise AnsibleError(
+                'network name must be provided.'
+            )
 
         return results
 
@@ -174,11 +178,7 @@ class Fetch():
         """
         organization_id = self.organization_id
         network_name = self.kwargs.get("network_name")
-
-        if network_name is None:
-            raise AnsibleError(
-                'network_name is required.'
-            )
+        device_name = self.kwargs.get("device_name")
 
         results = []
 
@@ -202,13 +202,25 @@ class Fetch():
                     network_id
                 )
                 for device in network_devices:
-                    serial = device.get("serial")
-                    if serial is not None:
-                        results.append(serial)
+                    # No Device Name Provided - Include All Serial Numbers
+                    if device_name is None:
+                        serial = device.get("serial")
+                        if serial is not None:
+                            results.append(serial)
+                    else:
+                        if device_name == device.get("name"):
+                            serial = device.get("serial")
+                            if serial is not None:
+                                results.append(serial)
+                                break
             else:
                 raise AnsibleError(
                     f'network with name "{network_name}" cannot be found.'
                 )
+        else:
+            raise AnsibleError(
+                'network name must be provided.'
+            )
 
         return results
 

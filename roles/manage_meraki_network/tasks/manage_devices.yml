@@ -45,16 +45,29 @@
 # Meraki requires a second API call to update name and address information
 
 - name: Update Network Devices
-  cisco.meraki.meraki_device:
-    auth_key: "{{ auth_key }}"
-    org_name: "{{ network.organization }}"
-    net_name: "{{ network.name }}"
-    name: "{{ device.name }}"
-    serial: "{{ device.serial }}"
-    address: "{{ network.address | default(omit) }}"
-    move_map_marker: "{{ 'true' if network.address | default(omit) }}"
-    state: "{{ device.state }}"
-  loop: "{{ network.devices }}"
-  loop_control:
-    loop_var: device
-  when: device.state == "present"
+  block:
+    - name: Add Location Information to Network Devices
+      ansible.builtin.uri:
+        url: "{{ dashboard_base_url }}/devices/{{ device.serial }}"
+        method: PUT
+        status_code: 200
+        headers:
+          Content-Type: application/json
+          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
+        body_format: json
+        body:
+          address: "{{ network.address | default(omit) }}"
+          moveMapMarker: "{{ 'true' if network.address | default(omit) }}"
+      changed_when: api_result.status == 200
+      until: api_result.status != 429
+      delay: 5
+      retries: 3
+      register: api_result
+      loop: "{{ network.devices }}"
+      loop_control:
+        loop_var: device
+      when: device.state == "present"
+  rescue:
+    - name: Something went wrong...
+      ansible.builtin.fail:
+        msg: "ERROR: {{ api_result }}"
