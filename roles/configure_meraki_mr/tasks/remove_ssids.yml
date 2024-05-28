@@ -1,8 +1,4 @@
 ---
-- name: Set default_ssid to {{ meraki_mr_configuration.network.name + ' - wireless WiFi' }}
-  ansible.builtin.set_fact:
-    default_ssid: "{{ meraki_mr_configuration.network.name + ' - wireless WiFi' }}"
-
 - name: Check for Existing SSIDs
   cisco.meraki.networks_wireless_ssids_info:
     meraki_api_key: "{{ auth_key }}"
@@ -25,12 +21,15 @@
     loop_var: response
   when: ssid_results.meraki_response is defined
 
-- name: Remove and Disable Default SSID
+- name: Remove and Disable SSIDs
   cisco.meraki.networks_wireless_ssids:
     meraki_api_key: "{{ auth_key }}"
     state: present
-    name: "{{ 'Unconfigured SSID ' + ((ssid_data[default_ssid].number | int + 1) | string) }}"
-    number: "{{ ssid_data[default_ssid]['number'] }}"
+    name: "{{ 'Unconfigured SSID ' + ((ssid_data[ssid.name].number | int + 1) | string) }}"
+    number: "{{ ssid.number }}"
     enabled: false
     networkId: "{{ lookup('wwt.meraki.fetch', 'network_id', org_name=meraki_mr_configuration.network.organization, meraki_api_key=auth_key, network_name=meraki_mr_configuration.network.name) }}"
-  when: ssid_data[default_ssid] is defined and ssid_data[default_ssid]['enabled'] is true
+  loop: "{{ ap.ssids }}"
+  loop_control:
+    loop_var: ssid
+  when: ssid.state == "absent" and ssid_data[ssid.name] is defined

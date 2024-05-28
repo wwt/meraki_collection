@@ -1,7 +1,7 @@
 ---
 - name: Configure Meraki MR Bluetooth Settings
   block:
-    - name: Configure MR Bluetooth Settings for {{ ap.network }}
+    - name: Configure MR Bluetooth Settings for {{ meraki_mr_configuration.network.name }}
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/networks/{{ network_id }}/wireless/bluetooth/settings"
         method: PUT

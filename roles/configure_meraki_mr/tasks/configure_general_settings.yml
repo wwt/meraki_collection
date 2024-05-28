@@ -1,13 +1,13 @@
 ---
-- name: Configuring General Wireless Settings for {{ ap.network }}
-  cisco.meraki.meraki_mr_settings:
-    auth_key: "{{ auth_key }}"
-    org_name: "{{ ap.organization }}"
-    net_name: "{{ ap.network }}"
+- name: Configuring General Wireless Settings for {{ meraki_mr_configuration.network.name }}
+  cisco.meraki.networks_wireless_settings:
+    meraki_api_key: "{{ auth_key }}"
+    networkId: "{{ lookup('wwt.meraki.fetch', 'network_id', org_name=meraki_mr_configuration.network.organization, meraki_api_key=auth_key, network_name=meraki_mr_configuration.network.name) }}"
     state: present
-    ipv6_bridge_enabled: "{{ ap.general_settings.ipv6_bridge_enabled | default(omit) }}"
-    led_lights_on: "{{ ap.general_settings.led_lights_on | default(omit) }}"
-    location_analytics_enabled: "{{ ap.general_settings.location_analytics_enabled | default(omit) }}"
-    meshing_enabled: "{{ ap.general_settings.meshing_enabled | default(omit) }}"
-    upgrade_strategy: "{{ ap.general_settings.upgrade_strategy | default(omit) }}"
+    ipv6BridgeEnabled: "{{ ap.general_settings.ipv6_bridge_enabled | default(omit) }}"
+    ledLightsOn: "{{ ap.general_settings.led_lights_on | default(omit) }}"
+    locationAnalyticsEnabled: "{{ ap.general_settings.location_analytics_enabled | default(omit) }}"
+    meshingEnabled: "{{ ap.general_settings.meshing_enabled | default(omit) }}"
+    upgradeStrategy: "{{ ap.general_settings.upgrade_strategy | default(omit) }}"
+    poolDhcpMonitoring: "{{ ap.general_settings.poolDhcpMonitoring | default(omit) }}"
   when: ap.general_settings is defined

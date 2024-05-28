@@ -7,35 +7,9 @@
 #
 # Written by: Nick Thompson (github/@nsthompson)
 #
-- name: Get Meraki Network IDs
-  cisco.meraki.meraki_network:
-    auth_key: "{{ auth_key }}"
-    org_name: "{{ ap.organization }}"
-    net_name: "{{ ap.network }}"
-    state: query
-  loop: "{{ meraki_mr_configuration.access_points }}"
-  loop_control:
-    loop_var: ap
-  register: network_results
-
-- name: Failure - Network DOES NOT exist
-  ansible.builtin.fail:
-    msg: Meraki Network is not provisioned
-  when: network_results.results[0].data.id is not defined
-
-- name: Build dict of Network Name to IDs
+- name: Look Up Meraki MR Access Point Network ID
   ansible.builtin.set_fact:
-    network_ids: >-
-      {{ network_ids | default({}) | combine(
-        {
-          result.data.name: {
-            "network_id": result.data.id,
-          }
-        }
-      ) }}
-  loop: "{{ network_results.results }}"
-  loop_control:
-    loop_var: result
+    network_id: "{{ lookup('wwt.meraki.fetch', 'network_id', org_name=meraki_mr_configuration.network.organization, meraki_api_key=auth_key, network_name=meraki_mr_configuration.network.name) }}"
 
 - name: Remove Default SSID
   ansible.builtin.include_tasks: remove_default_ssid.yml
@@ -81,10 +55,17 @@
     - wireless
     - ssid
 
+- name: Remove SSIDs
+  ansible.builtin.include_tasks: remove_ssids.yml
+  loop: "{{ meraki_mr_configuration.access_points }}"
+  loop_control:
+    loop_var: ap
+  tags:
+    - wireless
+    - ssid
+
 - name: Configure Bluetooth Settings
   ansible.builtin.include_tasks: configure_bluetooth.yml
-  vars:
-    network_id: "{{ network_ids[ap.network]['network_id'] }}"
   loop: "{{ meraki_mr_configuration.access_points }}"
   loop_control:
     loop_var: ap
