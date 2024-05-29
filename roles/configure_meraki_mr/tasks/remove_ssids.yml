@@ -29,7 +29,7 @@
     number: "{{ ssid.number }}"
     enabled: false
     networkId: "{{ lookup('wwt.meraki.fetch', 'network_id', org_name=meraki_mr_configuration.network.organization, meraki_api_key=auth_key, network_name=meraki_mr_configuration.network.name) }}"
-  loop: "{{ ap.ssids }}"
+  loop: "{{ meraki_mr_configuration.ssids }}"
   loop_control:
     loop_var: ssid
   when: ssid.state == "absent" and ssid_data[ssid.name] is defined

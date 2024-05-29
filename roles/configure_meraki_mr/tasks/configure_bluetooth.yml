@@ -11,12 +11,12 @@
           X-Cisco-Meraki-API-Key: "{{ auth_key }}"
         body_format: json
         body:
-          scanningEnabled: "{{ ap.bluetooth_settings.scanning_enabled | default(omit) }}"
-          advertisingEnabled: "{{ ap.bluetooth_settings.beaconing_enabled | default(omit) }}"
-          uuid: "{{ ap.bluetooth_settings.uuid | default(omit) }}"
-          majorMinorAssignmentMode: "{{ ap.bluetooth_settings.major_minor_assignment_mode | default(omit) }}"
-          major: "{{ ap.bluetooth_settings.major | default(omit) }}"
-          minor: "{{ ap.bluetooth_settings.minor | default(omit) }}"
+          scanningEnabled: "{{ meraki_mr_configuration.bluetooth_settings.scanning_enabled | default(omit) }}"
+          advertisingEnabled: "{{ meraki_mr_configuration.bluetooth_settings.beaconing_enabled | default(omit) }}"
+          uuid: "{{ meraki_mr_configuration.bluetooth_settings.uuid | default(omit) }}"
+          majorMinorAssignmentMode: "{{ meraki_mr_configuration.bluetooth_settings.major_minor_assignment_mode | default(omit) }}"
+          major: "{{ meraki_mr_configuration.bluetooth_settings.major | default(omit) }}"
+          minor: "{{ meraki_mr_configuration.bluetooth_settings.minor | default(omit) }}"
       changed_when: api_result.status == 200
       until: api_result.status != 429
       delay: 5

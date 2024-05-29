@@ -14,18 +14,22 @@ argument_specs:
         required: true
         description: Meraki API Auth Key
       meraki_mt_configuration:
-        type: list
-        elements: dict
+        type: dict
         required: true
         options:
-          organization:
-            type: str
-            required: true
-            description: Meraki Organization
           network:
-            type: str
+            type: dict
             required: true
-            description: Meraki Network
+            description: Network Wide Settings for MX
+            options:
+              organization:
+                type: str
+                required: true
+                description: Meraki Organization
+              name:
+                type: str
+                required: true
+                description: Meraki Network Name
           sensors:
             type: list
             required: true
@@ -36,6 +40,12 @@ argument_specs:
                 type: str
                 required: true
                 description: Name of MT Sensor
+              state:
+                type: str
+                description: Sensor State
+                choices:
+                  - present
+                  - absent
           mqtt_brokers:
             type: list
             elements: dict
@@ -88,11 +98,11 @@ argument_specs:
                     choices:
                       - none
                       - tls
-                  cert_file:
+                  certFile:
                     type: str
                     required: false
                     description: CA Certificate File Path
-                  hostname_verification:
+                  verifyHostnames:
                     type: bool
                     required: false
                     description: Verify Hostnames

@@ -18,7 +18,7 @@
     ipAssignmentMode: "{{ ssid.ipAssignmentMode | default(omit) }}"
     lanIsolationEnabled: "{{ ssid.lanIsolationEnabled | default(omit) }}"
     splashPage: "{{ ssid.splashPage | default(omit) }}"
-  loop: "{{ ap.ssids }}"
+  loop: "{{ meraki_mr_configuration.ssids }}"
   loop_control:
     loop_var: ssid
   when: ssid.state == "present"

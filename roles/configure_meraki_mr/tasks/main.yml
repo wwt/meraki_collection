@@ -22,17 +22,11 @@
 
 - name: Configure General Settings
   ansible.builtin.include_tasks: configure_general_settings.yml
-  loop: "{{ meraki_mr_configuration.access_points }}"
-  loop_control:
-    loop_var: ap
   tags:
     - wireless
 
 - name: Configure RF Profiles
   ansible.builtin.include_tasks: configure_rf_profiles.yml
-  loop: "{{ meraki_mr_configuration.access_points }}"
-  loop_control:
-    loop_var: ap
   tags:
     - wireless
     - rf_profiles
@@ -48,27 +42,18 @@
 
 - name: Configure SSIDs
   ansible.builtin.include_tasks: configure_ssids.yml
-  loop: "{{ meraki_mr_configuration.access_points }}"
-  loop_control:
-    loop_var: ap
   tags:
     - wireless
     - ssid
 
 - name: Remove SSIDs
   ansible.builtin.include_tasks: remove_ssids.yml
-  loop: "{{ meraki_mr_configuration.access_points }}"
-  loop_control:
-    loop_var: ap
   tags:
     - wireless
     - ssid
 
 - name: Configure Bluetooth Settings
   ansible.builtin.include_tasks: configure_bluetooth.yml
-  loop: "{{ meraki_mr_configuration.access_points }}"
-  loop_control:
-    loop_var: ap
   tags:
     - wireless
     - bluetooth

@@ -41,7 +41,7 @@
     transmission: "{{ profile.transmission | default(omit) }}"
     flexRadios: "{{ profile.flexRadios | default(omit) }}"
     perSsidSettings: "{{ profile.perSsidSettings | default(omit) }}"
-  loop: "{{ ap.rfProfiles }}"
+  loop: "{{ meraki_mr_configuration.rfProfiles }}"
   loop_control:
     loop_var: profile
   when: rf_profile_ids[profile.name] is undefined and profile.state == "present"
@@ -78,7 +78,7 @@
     transmission: "{{ profile.transmission | default(omit) }}"
     flexRadios: "{{ profile.flexRadios | default(omit) }}"
     perSsidSettings: "{{ profile.perSsidSettings | default(omit) }}"
-  loop: "{{ ap.rfProfiles }}"
+  loop: "{{ meraki_mr_configuration.rfProfiles }}"
   loop_control:
     loop_var: profile
   when: rf_profile_ids[profile.name] is defined and profile.state == "present"
@@ -89,7 +89,7 @@
     state: "{{ profile.state }}"
     networkId: "{{ network_id }}"
     rfProfileId: "{{ rf_profile_ids[profile.name].id }}"
-  loop: "{{ ap.rfProfiles }}"
+  loop: "{{ meraki_mr_configuration.rfProfiles }}"
   loop_control:
     loop_var: profile
   when: rf_profile_ids[profile.name] is defined and profile.state == "absent"
