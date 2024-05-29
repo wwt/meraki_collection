@@ -11,6 +11,11 @@
   ansible.builtin.set_fact:
     network_id: "{{ lookup('wwt.meraki.fetch', 'network_id', org_name=meraki_mx_configuration.network.organization, meraki_api_key=auth_key, network_name=meraki_mx_configuration.network.name) }}"
 
+- name: Failure - Network DOES NOT exist
+  ansible.builtin.fail:
+    msg: Meraki Network is not provisioned
+  when: network_id is not defined
+
 - name: Configure Meraki MX Deployment Settings
   ansible.builtin.include_tasks: configure_deployment.yml
   loop: "{{ meraki_mx_configuration.appliances }}"
