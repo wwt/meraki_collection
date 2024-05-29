@@ -22,7 +22,7 @@
       delay: 5
       retries: 3
       register: api_result
-      when: ap.bluetooth_settings is defined
+      when: meraki_mr_configuration.bluetooth_settings is defined
   rescue:
     - name: Something went wrong...
       ansible.builtin.debug:
