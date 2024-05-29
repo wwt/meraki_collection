@@ -17,10 +17,6 @@
     msg: Meraki Network is not provisioned
   when: network_id is not defined
 
-- name: test debug
-  ansible.builtin.debug:
-    msg: "{{ meraki_mv_configuration }}"
-
 - name: Configure Camera Wireless Profiles
   ansible.builtin.include_tasks: configure_wireless_profiles.yml
 
