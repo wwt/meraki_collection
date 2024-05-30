@@ -19,6 +19,7 @@ meraki_networks:
     organization: ORG NAME
     type:
       - appliance
+      - switch
       - wireless
       - camera
     timezone: America/Chicago
@@ -27,6 +28,9 @@ meraki_networks:
     tags: demo
     devices:
       - name: demo-mx68
+        serial: SERIAL
+        state: present
+      - name: demo-ms120
         serial: SERIAL
         state: present
       - name: demo-mr44

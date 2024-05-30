@@ -18,23 +18,24 @@ The `automations` dict in the argspec is currently unused as Cisco has not publi
 ```yaml
 ---
 meraki_mt_configuration:
-  - organization: ORG NAME
-    network: NETWORK NAME
-    sensors:
-      - name: demo-mt30
-    mqtt_brokers:
-      - name: MQTT-Broker
-        state: present
-        enabled: false
-        host: MQTT HOST
-        port: 8883
-        authentication:
-          username: MQTT USERNAME
-          password: MQTT PASSWORD
-        security:
-          mode: tls
-          cert_file: PATH/TO/MQTTCERT
-          hostname_verification: false
+  network:
+    organization: ORG NAME
+    name: NETWORK NAME
+  sensors:
+    - name: demo-mt30
+  mqtt_brokers:
+    - name: MQTT-Broker
+      state: present
+      enabled: true
+      host: MQTT HOST
+      port: 8883
+      authentication:
+        username: MQTT USERNAME
+        password: MQTT PASSWORD
+      security:
+        mode: tls
+        certFile: 'PATH/TO/MQTTCERT'
+        verifyHostnames: false
 ```
 
 ## Contributors
