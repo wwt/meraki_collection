@@ -67,7 +67,7 @@
   loop: "{{ broker_result.results }}"
   loop_control:
     loop_var: result
-  when: result.skipped is not true
+  when: not result.skipped
 
 - name: Enable MQTT Brokers
   cisco.meraki.networks_sensor_mqtt_brokers:
@@ -79,7 +79,7 @@
   loop: "{{ meraki_mt_configuration.mqtt_brokers | list }}"
   loop_control:
     loop_var: broker
-  when: broker.state == "present" and broker.enabled == true
+  when: broker.state == "present" and broker.enabled
 
 - name: Delete MQTT Broker
   block:

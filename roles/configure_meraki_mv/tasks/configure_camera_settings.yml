@@ -1,7 +1,12 @@
 ---
 - name: Query Device Serial Number for {{ camera.name }}
   ansible.builtin.set_fact:
-    device_serial: "{{ lookup('wwt.meraki.fetch', 'network_devices', org_name=meraki_mv_configuration.network.organization, meraki_api_key=auth_key, network_name=meraki_mv_configuration.network.name, device_name=camera.name) }}"
+    device_serial: "{{ lookup('wwt.meraki.fetch',
+      'network_devices',
+      org_name=meraki_mv_configuration.network.organization,
+      meraki_api_key=auth_key,
+      network_name=meraki_mv_configuration.network.name,
+      device_name=camera.name) }}"
 
 - name: Query for existing Camera Quality and Retention Profiles
   cisco.meraki.networks_camera_quality_retention_profiles_info:
@@ -67,9 +72,12 @@
     state: "{{ camera.state }}"
     serial: "{{ device_serial }}"
     ids:
-      primary: "{{ camera.camera_profiles.wireless['primary'] is defined | ternary(wireless_profile_ids[camera.camera_profiles.wireless.get('primary')].id, omit) }}"
-      secondary: "{{ camera.camera_profiles.wireless['secondary'] is defined | ternary(wireless_profile_ids[camera.camera_profiles.wireless.get('secondary')].id, omit) }}"
-      backup: "{{ camera.camera_profiles.wireless['backup'] is defined | ternary(wireless_profile_ids[camera.camera_profiles.wireless.get('backup')].id, omit) }}"
+      primary: "{{ camera.camera_profiles.wireless['primary'] is defined
+        | ternary(wireless_profile_ids[camera.camera_profiles.wireless.get('primary')].id, omit) }}"
+      secondary: "{{ camera.camera_profiles.wireless['secondary'] is defined
+        | ternary(wireless_profile_ids[camera.camera_profiles.wireless.get('secondary')].id, omit) }}"
+      backup: "{{ camera.camera_profiles.wireless['backup'] is defined
+        | ternary(wireless_profile_ids[camera.camera_profiles.wireless.get('backup')].id, omit) }}"
   when: camera.camera_profiles.wireless is defined
 
 - name: Query for existing MQTT brokers
@@ -115,5 +123,8 @@
     state: "{{ camera.state }}"
     senseEnabled: "{{ camera.sense.senseEnabled | default(omit) }}"
     mqttBrokerId: "{{ mqtt_broker_ids[camera.sense.mqttBrokerName].id | default(omit) }}"
-    audioDetection: "{{ ((camera.sense.audioDetection is defined) and (camera.sense.audioDetection.enabled) and (camera.sense.senseEnabled)) | ternary(camera.sense.audioDetection.enabled, omit) }}"
+    audioDetection: "{{ ((camera.sense.audioDetection is defined)
+      and (camera.sense.audioDetection.enabled)
+      and (camera.sense.senseEnabled))
+      | ternary(camera.sense.audioDetection.enabled, omit) }}"
   when: camera.sense.senseEnabled is defined and camera.state == "present"

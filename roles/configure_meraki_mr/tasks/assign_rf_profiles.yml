@@ -1,7 +1,12 @@
 ---
 - name: Query Device Serial Number for {{ ap.name }}
   ansible.builtin.set_fact:
-    device_serial: "{{ lookup('wwt.meraki.fetch', 'network_devices', org_name=meraki_mr_configuration.network.organization, meraki_api_key=auth_key, network_name=meraki_mr_configuration.network.name, device_name=ap.name) }}"
+    device_serial: "{{ lookup('wwt.meraki.fetch',
+      'network_devices',
+      org_name=meraki_mr_configuration.network.organization,
+      meraki_api_key=auth_key,
+      network_name=meraki_mr_configuration.network.name,
+      device_name=ap.name) }}"
 
 - name: Assign RF Profile for {{ ap.name }}
   cisco.meraki.devices_wireless_radio_settings:

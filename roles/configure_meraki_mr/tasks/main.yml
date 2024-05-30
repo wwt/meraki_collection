@@ -9,7 +9,11 @@
 #
 - name: Look Up Meraki MR Access Point Network ID
   ansible.builtin.set_fact:
-    network_id: "{{ lookup('wwt.meraki.fetch', 'network_id', org_name=meraki_mr_configuration.network.organization, meraki_api_key=auth_key, network_name=meraki_mr_configuration.network.name) }}"
+    network_id: "{{ lookup('wwt.meraki.fetch',
+      'network_id',
+      org_name=meraki_mr_configuration.network.organization,
+      meraki_api_key=auth_key,
+      network_name=meraki_mr_configuration.network.name) }}"
 
 - name: Failure - Network DOES NOT exist
   ansible.builtin.fail:

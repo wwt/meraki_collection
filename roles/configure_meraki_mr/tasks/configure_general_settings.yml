@@ -2,7 +2,11 @@
 - name: Configuring General Wireless Settings for {{ meraki_mr_configuration.network.name }}
   cisco.meraki.networks_wireless_settings:
     meraki_api_key: "{{ auth_key }}"
-    networkId: "{{ lookup('wwt.meraki.fetch', 'network_id', org_name=meraki_mr_configuration.network.organization, meraki_api_key=auth_key, network_name=meraki_mr_configuration.network.name) }}"
+    networkId: "{{ lookup('wwt.meraki.fetch',
+      'network_id',
+      org_name=meraki_mr_configuration.network.organization,
+      meraki_api_key=auth_key,
+      network_name=meraki_mr_configuration.network.name) }}"
     state: present
     ipv6BridgeEnabled: "{{ meraki_mr_configuration.general_settings.ipv6_bridge_enabled | default(omit) }}"
     ledLightsOn: "{{ meraki_mr_configuration.general_settings.led_lights_on | default(omit) }}"

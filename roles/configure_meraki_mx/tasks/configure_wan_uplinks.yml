@@ -1,7 +1,12 @@
 ---
 - name: Query Device Serial Number for {{ appliance.name }}
   ansible.builtin.set_fact:
-    device_serial: "{{ lookup('wwt.meraki.fetch', 'network_devices', org_name=meraki_mx_configuration.network.organization, meraki_api_key=auth_key, network_name=meraki_mx_configuration.network.name, device_name=appliance.name) }}"
+    device_serial: "{{ lookup('wwt.meraki.fetch',
+      'network_devices',
+      org_name=meraki_mx_configuration.network.organization,
+      meraki_api_key=auth_key,
+      network_name=meraki_mx_configuration.network.name,
+      device_name=appliance.name) }}"
 
 - name: Configure Meraki MX WAN Uplinks
   block:

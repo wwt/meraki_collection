@@ -2,7 +2,7 @@
 - name: Check for Existing SSIDs
   cisco.meraki.networks_wireless_ssids_info:
     meraki_api_key: "{{ auth_key }}"
-    networkId: "{{ lookup('wwt.meraki.fetch', 'network_id', org_name=meraki_mr_configuration.network.organization, meraki_api_key=auth_key, network_name=meraki_mr_configuration.network.name) }}"
+    networkId: "{{ network_id }}"
   register: ssid_results
 
 - name: Parse SSID Data
@@ -28,7 +28,7 @@
     name: "{{ 'Unconfigured SSID ' + ((ssid_data[ssid.name].number | int + 1) | string) }}"
     number: "{{ ssid.number }}"
     enabled: false
-    networkId: "{{ lookup('wwt.meraki.fetch', 'network_id', org_name=meraki_mr_configuration.network.organization, meraki_api_key=auth_key, network_name=meraki_mr_configuration.network.name) }}"
+    networkId: "{{ network_id }}"
   loop: "{{ meraki_mr_configuration.ssids }}"
   loop_control:
     loop_var: ssid
