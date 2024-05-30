@@ -8,17 +8,20 @@ This role is used to configure Meraki MX Firewalls
 
 To use this role, you will need to provide `dashboard_base_url`, `auth_key` and have a variable named `meraki_mx_configuration` that adheres to the following argument spec:
 
-![Argument Spec](../../assets/configure_meraki_mx.svg)
+![Argument Spec](./assets/configure_meraki_mx.svg)
 
 ### Example `meraki_mx_configuration` Data Model
 
 ```yaml
 ---
 meraki_mx_configuration:
+  network:
+    organization: ORG NAME
+    name: NETWORK NAME
+    lan_settings:
+      enable_vlans: true
   appliances:
     - name: demo-mx68
-      organization: ORG NAME
-      network: NETWORK NAME
       deployment_settings:
         deployment_mode: routed
         client_tracking: MAC address
@@ -39,9 +42,17 @@ meraki_mx_configuration:
             enabled: false
         wan2:
           enabled: false
-      lan_settings:
-        enable_vlans: true
       vlans:
+        - id: 1
+          state: present
+          name: Clients
+          subnet: 10.74.1.0/24
+          appliance_ip: 10.74.1.1
+          reserved_ip_range:
+            - start: 10.74.1.2
+              end: 10.74.1.49
+              comment: Client VLAN Reserved Range
+          dns_nameservers: 1.1.1.1
         - id: 10
           state: present
           name: Servers
@@ -54,13 +65,13 @@ meraki_mx_configuration:
           dns_nameservers: 1.1.1.1
         - id: 20
           state: present
-          name: Clients
+          name: Printers
           subnet: 10.74.20.0/24
           appliance_ip: 10.74.20.1
           reserved_ip_range:
             - start: 10.74.20.2
               end: 10.74.20.49
-              comment: Client VLAN Reserved Range
+              comment: Printer VLAN Reserved Range
           dns_nameservers: 1.1.1.1
         - id: 30
           state: present
@@ -71,15 +82,14 @@ meraki_mx_configuration:
             - start: 10.74.30.2
               end: 10.74.30.49
               comment: Camera VLAN Reserved Range
-        - id: 1
-          state: absent
+          dns_nameservers: 1.1.1.1
       ports:
         - id: 3
           enabled: true
           drop_untagged_traffic: false
           type: access
-          vlan: 10
           access_policy: open
+          vlan: 10
         - id: 4
           enabled: false
         - id: 5
@@ -100,8 +110,8 @@ meraki_mx_configuration:
           enabled: true
           drop_untagged_traffic: false
           type: trunk
-          vlan: 10
-          allowed_vlans: 10,20,30
+          vlan: 1
+          allowed_vlans: 1,10,20,30
       threat_protection:
         malware:
           mode: enabled
@@ -116,14 +126,15 @@ meraki_mx_configuration:
         firewall:
           l3_rules:
             - comment: Deny Traffic to 4.2.2.2
-              src_cidr: Any
-              src_port: Any
-              dest_cidr: 4.2.2.2
-              dest_port: Any
+              srcCidr: Any
+              srcPort: Any
+              destCidr: 4.2.2.2
+              destPort: Any
               protocol: any
               policy: deny
+              syslogEnabled: false
           l7_rules:
-            - type: blocked_countries
+            - type: blockedCountries
               countries:
                 - CN
                 - RU

@@ -8,7 +8,7 @@ This role is used to configure Meraki networks and claim devices into network in
 
 To use this role, you will need to provide `auth_key` and have a variable named `meraki_networks` that adheres to the following argument spec:
 
-![Argument Spec](../../assets/manage_meraki_network.svg)
+![Argument Spec](./assets/manage_meraki_network.svg)
 
 ## Example `meraki_networks` Data Model
 
@@ -19,6 +19,7 @@ meraki_networks:
     organization: ORG NAME
     type:
       - appliance
+      - switch
       - wireless
       - camera
     timezone: America/Chicago
@@ -27,6 +28,9 @@ meraki_networks:
     tags: demo
     devices:
       - name: demo-mx68
+        serial: SERIAL
+        state: present
+      - name: demo-ms120
         serial: SERIAL
         state: present
       - name: demo-mr44
