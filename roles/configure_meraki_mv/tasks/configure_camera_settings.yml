@@ -122,7 +122,8 @@
     serial: "{{ device_serial }}"
     state: "{{ camera.state }}"
     senseEnabled: "{{ camera.sense.senseEnabled | default(omit) }}"
-    mqttBrokerId: "{{ mqtt_broker_ids[camera.sense.mqttBrokerName].id | default(omit) }}"
+    mqttBrokerId: '{{ camera.sense["mqttBrokerName"] is defined
+        | ternary(mqtt_broker_ids[camera.sense.get("mqttBrokerName")].id, omit) }}'
     audioDetection: "{{ ((camera.sense.audioDetection is defined)
       and (camera.sense.audioDetection.enabled)
       and (camera.sense.senseEnabled))
