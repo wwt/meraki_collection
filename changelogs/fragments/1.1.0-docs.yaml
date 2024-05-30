@@ -1,7 +1,0 @@
-trivial:
-  - claim_meraki - Moved README to docs/CLAIM_MERAKI.md and updated README.md
-  - configure_meraki_mx - Moved README to docs/CONFIGURE_MERAKI_MX.md and updated README.md
-  - configure_meraki_mr - Moved README to docs/CONFIGURE_MERAKI_MR.md and updated README.md
-  - configure_meraki_mt - Moved README to docs/CONFIGURE_MERAKI_MT.md and updated README.md
-  - configure_meraki_mv - Moved README to docs/CONFIGURE_MERAKI_MV.md and updated README.md
-  - manage_meraki_network - Moved README to docs/MANAGE_MERAKI_NETWORK.md and updated README.md
