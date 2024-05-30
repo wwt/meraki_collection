@@ -8,7 +8,7 @@ This role is used to configure Meraki MR Access Points
 
 To use this role, you will need to provide `dashboard_base_url`, `auth_key` and have a variable named `meraki_mr_configuration` that adheres to the following argument spec:
 
-![Argument Spec](../../assets/configure_meraki_mr.svg)
+![Argument Spec](./assets/configure_meraki_mr.svg)
 
 ## Example `meraki_mr_configuration` Data Model
 

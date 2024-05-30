@@ -8,7 +8,7 @@ This role is used to configure Meraki networks and claim devices into network in
 
 To use this role, you will need to provide `auth_key` and have a variable named `meraki_networks` that adheres to the following argument spec:
 
-![Argument Spec](../../assets/manage_meraki_network.svg)
+![Argument Spec](./assets/manage_meraki_network.svg)
 
 ## Example `meraki_networks` Data Model
 

@@ -8,7 +8,7 @@ This role is used to claim Meraki Orders, Licenses, and Devices into the Meraki 
 
 To use this role, you will need to provide `dashboard_base_url`, `auth_key` and the remaining variables that adhere to the following argpsec:
 
-![Argument Spec](../../assets/claim_meraki.svg)
+![Argument Spec](./assets/claim_meraki.svg)
 
 ## Sample Playbook using this role
 
