@@ -1,0 +1,5 @@
+breaking_changes:
+  - configure_meraki_mx - Data model updated to support migration to latest cisco.meraki certified collection.
+  - configure_meraki_mr - Data model updated to support migration to latest cisco.meraki certified collection.
+  - configure_meraki_mt - Data model updated to support migration to latest cisco.meraki certified collection.
+  - configure_meraki_mv - Data model updated to support migration to latest cisco.meraki certified collection.
