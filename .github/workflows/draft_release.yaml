@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 env:
   NAMESPACE: ${{ github.repository_owner }}
-  COLLECTION_NAME: utils
+  COLLECTION_NAME: meraki
   ANSIBLE_COLLECTIONS_PATHS: ./
 jobs:
   update_release_draft:
