@@ -1,13 +1,18 @@
-# CHANGELOG
+# wwt\.meraki Release Notes
 
-## 1.0.0 (2023-05-26)
+**Topics**
 
-* 🎉 first release!
+- <a href="#v1-1-0">v1\.1\.0</a>
+    - <a href="#new-plugins">New Plugins</a>
+        - <a href="#lookup">Lookup</a>
 
-## 1.0.1 (2023-06-04)
+<a id="v1-1-0"></a>
+## v1\.1\.0
 
-* Added role metadata
+<a id="new-plugins"></a>
+### New Plugins
 
-## 1.1.0 (2024-05-30)
+<a id="lookup"></a>
+#### Lookup
 
-* Updated collection to use cisco.meraki certified collection
+* wwt\.meraki\.fetch \- Fetch data from the Meraki API\.
