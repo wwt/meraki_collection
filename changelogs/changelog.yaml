@@ -1,0 +1,11 @@
+ancestor: null
+releases:
+  1.1.0:
+    release_date: '2024-05-30'
+    changes:
+      release_summary: This release includes updates to support the certified cisco.meraki content collection.
+    plugins:
+      lookup:
+        - description: Fetch data from the Meraki API.
+          name: fetch
+          namespace: null

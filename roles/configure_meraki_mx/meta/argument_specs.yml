@@ -17,6 +17,28 @@ argument_specs:
         type: dict
         required: true
         options:
+          network:
+            type: dict
+            required: true
+            description: Network Wide Settings for MX
+            options:
+              organization:
+                type: str
+                required: true
+                description: Meraki Organization
+              name:
+                type: str
+                required: true
+                description: Meraki Network Name
+              lan_settings:
+                type: dict
+                required: true
+                description: Network Wide LAN Settings for MX
+                options:
+                  enable_vlans:
+                    type: bool
+                    required: true
+                    description: Enable VLAN Mode
           appliances:
             type: list
             required: true
@@ -27,14 +49,6 @@ argument_specs:
                 type: str
                 required: true
                 description: Name of MX Appliance
-              organization:
-                type: str
-                required: true
-                description: Meraki Organization
-              network:
-                type: str
-                required: true
-                description: Meraki Network Name
               deployment_settings:
                 type: dict
                 required: true
@@ -268,14 +282,6 @@ argument_specs:
                                 type: str
                                 required: false
                                 description: PPPoE Password
-              lan_settings:
-                type: dict
-                required: true
-                options:
-                  enable_vlans:
-                    type: bool
-                    required: true
-                    description: Enable VLAN Mode
               vlans:
                 type: list
                 required: true
@@ -327,17 +333,18 @@ argument_specs:
                     elements: dict
                     options:
                       mac:
-                        type: str
+                        type: dict
                         required: false
                         description: Client MAC Address
-                      ip:
-                        type: str
-                        required: false
-                        description: Client IP Address
-                      name:
-                        type: str
-                        required: false
-                        description: Client Name
+                        options:
+                          ip:
+                            type: str
+                            required: false
+                            description: Client IP Address
+                          name:
+                            type: str
+                            required: false
+                            description: Client Name
                   dns_nameservers:
                     type: str
                     required: false
@@ -477,19 +484,19 @@ argument_specs:
                             type: str
                             required: false
                             description: Rule Description
-                          src_cidr:
+                          srcCidr:
                             type: str
                             required: false
                             description: Source CIDR Address or 'Any'
-                          src_port:
+                          srcPort:
                             type: str
                             required: false
                             description: Source Port
-                          dest_cidr:
+                          destCidr:
                             type: str
                             required: false
                             description: Destination CIDR Address or 'Any'
-                          dest_port:
+                          destPort:
                             type: str
                             required: false
                             description: Destination Port
@@ -509,6 +516,14 @@ argument_specs:
                             choices:
                               - allow
                               - deny
+                          syslogEnabled:
+                            type: bool
+                            required: false
+                            description: Enable Syslog - only applicable if a syslog server has been configured
+                          syslogDefaultRule:
+                            type: bool
+                            required: false
+                            description: Log the special default rule (boolean value - enable only if you've configured a syslog server)
                       l7_rules:
                         type: list
                         required: false
@@ -537,7 +552,7 @@ argument_specs:
                             type: str
                             required: false
                             description: FQDN of host to filter
-                          ip_range:
+                          ipRange:
                             type: str
                             required: false
                             description: CIDR range of IP, can append port with ":"
@@ -557,9 +572,9 @@ argument_specs:
                             description: Rule Type
                             choices:
                               - application
-                              - application_category
-                              - blocked_countries
+                              - applicationCategory
+                              - blockedCountries
                               - host
-                              - ip_range
+                              - ipRange
                               - port
-                              - allowed_countries
+                              - allowedCountries

@@ -1,17 +1,32 @@
 ---
-- name: Configure MX VLANs for {{ appliance.name }}
-  cisco.meraki.meraki_mx_vlan:
-    auth_key: "{{ auth_key }}"
-    org_name: "{{ appliance.organization }}"
-    net_name: "{{ appliance.network }}"
+- name: Initial Configuration of MX VLANs for {{ appliance.name }}
+  cisco.meraki.networks_appliance_vlans:
+    meraki_api_key: "{{ auth_key }}"
     state: "{{ vlan.state }}"
-    vlan_id: "{{ vlan.id }}"
+    networkId: "{{ network_id }}"
+    id: "{{ vlan.id }}"
     name: "{{ vlan.name | default(omit) }}"
     subnet: "{{ vlan.subnet | default(omit) }}"
-    appliance_ip: "{{ vlan.appliance_ip | default(omit) }}"
-    reserved_ip_range: "{{ vlan.reserved_ip_range | default(omit) }}"
-    fixed_ip_assignments: "{{ vlan.fixed_ip_assignments | default(omit) }}"
-    dns_nameservers: "{{ vlan.dns_nameservers | default(omit) }}"
+    applianceIp: "{{ vlan.appliance_ip | default(omit) }}"
   loop: "{{ appliance.vlans }}"
   loop_control:
     loop_var: vlan
+
+- name: Second Pass Configuration of MX VLANs for {{ appliance.name }}
+  cisco.meraki.networks_appliance_vlans:
+    meraki_api_key: "{{ auth_key }}"
+    state: "{{ vlan.state }}"
+    networkId: "{{ network_id }}"
+    id: "{{ vlan.id }}"
+    name: "{{ vlan.name | default(omit) }}"
+    reservedIpRanges: "{{ vlan.reserved_ip_range | default(omit) }}"
+    fixedIpAssignments: "{{ vlan.fixed_ip_assignments | default(omit) }}"
+    dnsNameservers: "{{ vlan.dns_nameservers | default(omit) }}"
+  loop: "{{ appliance.vlans }}"
+  loop_control:
+    loop_var: vlan
+  when: >
+    ((vlan.reserved_ip_range is defined) or
+    (vlan.fixed_ip_assignments is defined) or
+    (vlan.dns_nameservers is defined)) and
+    vlan.state == "present"

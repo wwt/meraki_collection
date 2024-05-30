@@ -1,28 +1,73 @@
 ---
 - name: Manage Network Devices
-  cisco.meraki.meraki_device:
-    auth_key: "{{ auth_key }}"
-    org_name: "{{ network.organization }}"
-    net_name: "{{ network.name }}"
-    serial: "{{ device.serial }}"
-    state: "{{ device.state }}"
-  loop: "{{ network.devices }}"
+  block:
+    - name: Look for existing network devices
+      ansible.builtin.set_fact:
+        device_serials: "{{ query('wwt.meraki.fetch', 'network_devices', network_name=network.name, org_name=network.organization, meraki_api_key=auth_key) }}"
+
+    - name: Build List of Network Devices to Add
+      ansible.builtin.set_fact:
+        add_present_devices: "{{ (add_present_devices | default([])) + [device.serial] }}"
+      loop: "{{ network.devices }}"
+      loop_control:
+        loop_var: device
+      when: device.state == "present" and device.serial not in device_serials
+
+    - name: Build List of Network Devices to Remove
+      ansible.builtin.set_fact:
+        remove_absent_devices: "{{ (remove_absent_devices | default([])) + [device.serial] }}"
+      loop: "{{ network.devices }}"
+      loop_control:
+        loop_var: device
+      when: device.state == "absent" and device.serial in device_serials
+  rescue:
+    - name: Device Query Failure
+      ansible.builtin.fail:
+        msg: "{{ ansible_failed_result }}"
+
+- name: Claim Devices
+  cisco.meraki.networks_devices_claim:
+    meraki_api_key: "{{ auth_key }}"
+    networkId: "{{ lookup('wwt.meraki.fetch', 'network_id', org_name=network.organization, meraki_api_key=auth_key, network_name=network.name) }}"
+    serials: "{{ add_present_devices }}"
+  when: add_present_devices is defined
+
+- name: Remove Devices
+  cisco.meraki.networks_devices_remove:
+    meraki_api_key: "{{ auth_key }}"
+    networkId: "{{ lookup('wwt.meraki.fetch', 'network_id', org_name=network.organization, meraki_api_key=auth_key, network_name=network.name) }}"
+    serial: "{{ device }}"
+  loop: "{{ remove_absent_devices }}"
   loop_control:
     loop_var: device
+  when: remove_absent_devices is defined
 
 # Meraki requires a second API call to update name and address information
 
 - name: Update Network Devices
-  cisco.meraki.meraki_device:
-    auth_key: "{{ auth_key }}"
-    org_name: "{{ network.organization }}"
-    net_name: "{{ network.name }}"
-    name: "{{ device.name }}"
-    serial: "{{ device.serial }}"
-    address: "{{ network.address | default(omit) }}"
-    move_map_marker: "{{ 'true' if network.address | default(omit) }}"
-    state: "{{ device.state }}"
-  loop: "{{ network.devices }}"
-  loop_control:
-    loop_var: device
-  when: device.state == "present"
+  block:
+    - name: Add Location Information to Network Devices
+      ansible.builtin.uri:
+        url: "{{ dashboard_base_url }}/devices/{{ device.serial }}"
+        method: PUT
+        status_code: 200
+        headers:
+          Content-Type: application/json
+          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
+        body_format: json
+        body:
+          address: "{{ network.address | default(omit) }}"
+          moveMapMarker: "{{ 'true' if network.address | default(omit) }}"
+      changed_when: api_result.status == 200
+      until: api_result.status != 429
+      delay: 5
+      retries: 3
+      register: api_result
+      loop: "{{ network.devices }}"
+      loop_control:
+        loop_var: device
+      when: device.state == "present"
+  rescue:
+    - name: Something went wrong...
+      ansible.builtin.fail:
+        msg: "ERROR: {{ api_result }}"

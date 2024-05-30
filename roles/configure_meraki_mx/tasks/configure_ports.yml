@@ -1,16 +1,15 @@
 ---
 - name: Configure Meraki MX Ports for {{ appliance.name }}
-  cisco.meraki.meraki_mx_l2_interface:
-    auth_key: "{{ auth_key }}"
-    org_name: "{{ appliance.organization }}"
-    net_name: "{{ appliance.network }}"
-    number: "{{ port.id }}"
+  cisco.meraki.networks_appliance_ports:
+    meraki_api_key: "{{ auth_key }}"
+    networkId: "{{ network_id }}"
+    portId: "{{ port.id }}"
     enabled: "{{ port.enabled }}"
-    drop_untagged_traffic: "{{ port.drop_untagged_traffic | default(omit) }}"
-    port_type: "{{ port.type | default(omit) }}"
+    dropUntaggedTraffic: "{{ port.drop_untagged_traffic | default(omit) }}"
+    type: "{{ port.type | default(omit) }}"
     vlan: "{{ port.vlan | default(omit) }}"
-    allowed_vlans: "{{ port.allowed_vlans | default(omit) }}"
-    access_policy: "{{ port.access_policy | default(omit) }}"
+    allowedVlans: "{{ port.allowed_vlans | default(omit) }}"
+    accessPolicy: "{{ port.access_policy | default(omit) }}"
   loop: "{{ appliance.ports }}"
   loop_control:
     loop_var: port

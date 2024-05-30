@@ -14,21 +14,25 @@ argument_specs:
         required: true
         description: Meraki API Auth Key
       meraki_mv_configuration:
-        type: list
-        elements: dict
+        type: dict
         required: true
         options:
-          organization:
-            type: str
-            required: true
-            description: Meraki Organization
           network:
-            type: str
+            type: dict
             required: true
-            description: Meraki Network
+            description: Network Wide Settings for MX
+            options:
+              organization:
+                type: str
+                required: true
+                description: Meraki Organization
+              name:
+                type: str
+                required: true
+                description: Meraki Network Name
           camera_profiles:
             type: dict
-            required: false
+            required: true
             description: Camera Profile Configuration
             options:
               wireless:
@@ -48,36 +52,46 @@ argument_specs:
                     choices:
                       - present
                       - absent
-                  auth_mode:
-                    type: str
-                    required: false
-                    description: SSID Auth Mode
-                    choices:
-                      - psk
-                      - 8021x-radius
-                  encryption_mode:
-                    type: str
-                    required: false
-                    description: Encryption Mode
-                    choices:
-                      - wpa
-                      - wpa-eap
                   ssid:
-                    type: str
+                    type: dict
                     required: false
-                    description: SSID
-                  psk:
-                    type: str
+                    description: SSID configuration
+                    options:
+                      name:
+                        type: str
+                        required: false
+                        description: SSID Name
+                      authMode:
+                        type: str
+                        required: false
+                        description: SSID Auth Mode
+                        choices:
+                          - psk
+                          - 8021x-radius
+                      encryptionMode:
+                        type: str
+                        required: false
+                        description: Encryption Mode
+                        choices:
+                          - wpa
+                          - wpa-eap
+                      psk:
+                        type: str
+                        required: false
+                        description: Wireless PSK
+                  identity:
+                    type: dict
                     required: false
-                    description: Wireless PSK
-                  username:
-                    type: str
-                    required: false
-                    description: Username when using 8021x-radius
-                  password:
-                    type: str
-                    required: false
-                    description: Password when using 8021x-radius
+                    description: Identity Configuration
+                    options:
+                      username:
+                        type: str
+                        required: false
+                        description: Username when using 8021x-radius
+                      password:
+                        type: str
+                        required: false
+                        description: Password when using 8021x-radius
               quality_and_retention:
                 type: list
                 elements: dict
@@ -95,11 +109,11 @@ argument_specs:
                     choices:
                       - present
                       - absent
-                  cloud_archive:
+                  cloudArchiveEnabled:
                     type: bool
                     required: false
                     description: Enable Cloud Archive
-                  max_retention_days:
+                  maxRetentionDays:
                     type: int
                     required: false
                     description: Maximum Cloud Retention Days - Do not set a value to keep until storage is full
@@ -118,30 +132,30 @@ argument_specs:
                       - 30
                       - 60
                       - 90
-                  motion_based_retention:
+                  motionBasedRetentionEnabled:
                     type: bool
                     required: false
                     description: Delete footage older than 3 days in which no motion was detected.  Does not apply to MV2.
-                  motion_detector_version:
+                  motionDetectorVersion:
                     type: int
                     required: false
-                    description: Motion Detector Version
+                    description: Motion Detector Version - Defaults to v2
                     choices:
                       - 1
                       - 2
-                  restricted_bandwidth_mode:
+                  restrictedBandwidthModeEnabled:
                     type: bool
                     required: false
                     description: Disable features that require additional bandwidth.  Does not apply to MV2.
-                  audio_recording:
+                  audioRecordingEnabled:
                     type: bool
                     required: false
                     description: Enable Audio Recording
-                  schedule_name:
-                    type: bool
+                  scheduleId:
+                    type: str
                     required: false
-                    description: Camera Recording Schedule Name
-                  video_settings:
+                    description: Camera Recording Schedule ID
+                  videoSettings:
                     type: dict
                     required: false
                     description: Camera Specific Video Settings
@@ -427,27 +441,54 @@ argument_specs:
                 choices:
                   - present
                   - absent
-              quality_and_retention:
+              camera_profiles:
                 type: dict
                 required: false
-                description: Quality and Retention Settings
+                description: Camera Profile Assignment
                 options:
-                  profile_name:
-                    type: str
+                  wireless:
+                    type: dict
                     required: false
-                    description: Camera Retention Profile Name
-                  motion_detector_version:
+                    description: Wireless Profiles
+                    options:
+                      primary:
+                        type: str
+                        required: false
+                        description: Primary Wireless Profile Name
+                      secondary:
+                        type: str
+                        required: false
+                        description: Secondary Wireless Profile Name
+                      backup:
+                        type: str
+                        required: false
+                        description: Backup Wireless Profile Name
+                  quality_and_retention:
+                    type: dict
+                    required: false
+                    description: Quality and Retention Profile
+                    options:
+                      name:
+                        type: str
+                        required: false
+                        description: Quality and Retention Profile Name
+              quality_and_retention_settings:
+                type: dict
+                required: false
+                description: Manual Quality and Retention Settings - Use when not binding to a profile
+                options:
+                  motionDetectorVersion:
                     type: int
                     required: false
-                    description: Motion Detector Version
+                    description: Motion Detector Version - Defaults to v2
                     choices:
                       - 1
                       - 2
-                  audio_recording:
+                  audioRecordingEnabled:
                     type: bool
                     required: false
                     description: Enable Audio Recording
-                  video_resolution:
+                  resolution:
                     type: str
                     required: false
                     description: Video Resolution
@@ -460,7 +501,7 @@ argument_specs:
                       - 2880x2880
                       - 2688x1512
                       - 3840x2160
-                  video_quality:
+                  quality:
                     type: str
                     required: false
                     description: Video Quality
@@ -468,45 +509,33 @@ argument_specs:
                       - standard
                       - enhanced
                       - high
-                  motion_based_retention:
+                  motionBasedRetentionEnabled:
                     type: bool
                     required: false
                     description: Delete footage older than 3 days in which no motion was detected.  Does not apply to MV2.
-                  restricted_bandwidth_mode:
+                  restrictedBandwidthMode:
                     type: bool
                     required: false
                     description: Disable features that require additional bandwidth.  Does not apply to MV2.
-              wireless:
-                type: dict
-                required: false
-                description: Wireless Profiles
-                options:
-                  profile_1:
-                    type: str
-                    required: false
-                    description: Primary Wireless Profile Name
-                  profile_2:
-                    type: str
-                    required: false
-                    description: Secondary Wireless Profile Name
-                  backup_profile:
-                    type: str
-                    required: false
-                    description: Backup Wireless Profile Name
               sense:
                 type: dict
                 required: false
                 description: Enable Camera Sense
                 options:
-                  enabled:
+                  senseEnabled:
                     type: bool
                     required: false
                     description: Enable Meraki Sense
-                  audio_detection:
-                    type: bool
-                    required: false
-                    description: Audio Detection Enabled
-                  mqtt_broker_name:
+                  mqttBrokerName:
                     type: str
                     required: false
                     description: MQTT Broker Name
+                  audioDetection:
+                    type: dict
+                    required: false
+                    description: Audio Detection Settings
+                    options:
+                      enabled:
+                        type: bool
+                        required: false
+                        description: Audio Detection Enabled

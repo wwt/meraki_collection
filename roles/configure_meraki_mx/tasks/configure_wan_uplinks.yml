@@ -1,18 +1,18 @@
 ---
 - name: Query Device Serial Number for {{ appliance.name }}
-  cisco.meraki.meraki_device:
-    auth_key: "{{ auth_key }}"
-    org_name: "{{ appliance.organization }}"
-    net_name: "{{ appliance.network }}"
-    hostname: "{{ appliance.name }}"
-    state: query
-  register: device_results
+  ansible.builtin.set_fact:
+    device_serial: "{{ lookup('wwt.meraki.fetch',
+      'network_devices',
+      org_name=meraki_mx_configuration.network.organization,
+      meraki_api_key=auth_key,
+      network_name=meraki_mx_configuration.network.name,
+      device_name=appliance.name) }}"
 
 - name: Configure Meraki MX WAN Uplinks
   block:
     - name: Configure MX WAN Uplinks for {{ appliance.name }}
       ansible.builtin.uri:
-        url: "{{ dashboard_base_url }}/devices/{{ device_results['data'][0]['serial'] }}/appliance/uplinks/settings"
+        url: "{{ dashboard_base_url }}/devices/{{ device_serial }}/appliance/uplinks/settings"
         method: PUT
         status_code: 200
         headers:

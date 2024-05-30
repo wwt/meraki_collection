@@ -2,11 +2,9 @@
 - name: Configure RF Profiles
   block:
     - name: Querying for existing RF Profiles
-      cisco.meraki.meraki_mr_rf_profile:
-        auth_key: "{{ auth_key }}"
-        org_name: "{{ ap.organization }}"
-        net_name: "{{ ap.network }}"
-        state: query
+      cisco.meraki.networks_wireless_rf_profiles_info:
+        meraki_api_key: "{{ auth_key }}"
+        networkId: "{{ network_id }}"
       register: profile_results
   rescue:
     - name: Something went wrong...
@@ -19,28 +17,31 @@
       {{ rf_profile_ids | default({}) | combine(
         {
           result.name: {
-            "rf_profile_id": result.id,
+            "id": result.id,
           }
         }
       ) }}
-  loop: "{{ profile_results.data }}"
+  loop: "{{ profile_results.meraki_response }}"
   loop_control:
     loop_var: result
-  when: profile_results.data is defined
+  when: profile_results.meraki_response is defined
 
-- name: Configuring RF Profiles
-  cisco.meraki.meraki_mr_rf_profile:
-    auth_key: "{{ auth_key }}"
-    org_name: "{{ ap.organization }}"
-    net_name: "{{ ap.network }}"
+- name: Creating RF Profiles
+  cisco.meraki.networks_wireless_rf_profiles:
+    meraki_api_key: "{{ auth_key }}"
     state: "{{ profile.state }}"
     name: "{{ profile.name }}"
-    band_selection_type: "{{ profile.band_selection_type | default(omit) }}"
-    client_balancing_enabled: "{{ profile.client_balancing_enabled | default(omit) }}"
-    ap_band_settings: "{{ profile.ap_band_settings | default(omit) }}"
-    five_ghz_settings: "{{ profile.five_ghz_settings | default(omit) }}"
-    two_four_ghz_settings: "{{ profile.two_four_ghz_settings | default(omit) }}"
-  loop: "{{ ap.rf_profiles }}"
+    networkId: "{{ network_id }}"
+    bandSelectionType: "{{ profile.bandSelectionType | default(omit) }}"
+    clientBalancingEnabled: "{{ profile.clientBalancingEnabled | default(omit) }}"
+    apBandSettings: "{{ profile.apBandSettings | default(omit) }}"
+    twoFourGhzSettings: "{{ profile.twoFourGhzSettings | default(omit) }}"
+    fiveGhzSettings: "{{ profile.fiveGhzSettings | default(omit) }}"
+    sixGhzSettings: "{{ profile.sixGhzSettings | default(omit) }}"
+    transmission: "{{ profile.transmission | default(omit) }}"
+    flexRadios: "{{ profile.flexRadios | default(omit) }}"
+    perSsidSettings: "{{ profile.perSsidSettings | default(omit) }}"
+  loop: "{{ meraki_mr_configuration.rfProfiles }}"
   loop_control:
     loop_var: profile
   when: rf_profile_ids[profile.name] is undefined and profile.state == "present"
@@ -49,10 +50,10 @@
 - name: Add newly created RF profile to dict
   ansible.builtin.set_fact:
     rf_profile_ids: >-
-      {{ rf_profile_ids|default({}) | combine(
+      {{ rf_profile_ids | default({}) | combine(
         {
-          result.data.name: {
-            "rf_profile_id": result.data.id,
+          result.meraki_response.name: {
+            "id": result.meraki_response.id,
           }
         }
       ) }}
@@ -62,30 +63,33 @@
   when: not rf_profile_output.skipped
 
 - name: Updating RF Profiles
-  cisco.meraki.meraki_mr_rf_profile:
-    auth_key: "{{ auth_key }}"
-    org_name: "{{ ap.organization }}"
-    net_name: "{{ ap.network }}"
+  cisco.meraki.networks_wireless_rf_profiles:
+    meraki_api_key: "{{ auth_key }}"
     state: "{{ profile.state }}"
-    profile_id: "{{ rf_profile_ids[profile.name].rf_profile_id }}"
-    band_selection_type: "{{ profile.band_selection_type | default(omit) }}"
-    client_balancing_enabled: "{{ profile.client_balancing_enabled | default(omit) }}"
-    ap_band_settings: "{{ profile.ap_band_settings | default(omit) }}"
-    five_ghz_settings: "{{ profile.five_ghz_settings | default(omit) }}"
-    two_four_ghz_settings: "{{ profile.two_four_ghz_settings | default(omit) }}"
-  loop: "{{ ap.rf_profiles }}"
+    name: "{{ profile.name }}"
+    networkId: "{{ network_id }}"
+    rfProfileId: "{{ rf_profile_ids[profile.name].id }}"
+    bandSelectionType: "{{ profile.bandSelectionType | default(omit) }}"
+    clientBalancingEnabled: "{{ profile.clientBalancingEnabled | default(omit) }}"
+    apBandSettings: "{{ profile.apBandSettings | default(omit) }}"
+    twoFourGhzSettings: "{{ profile.twoFourGhzSettings | default(omit) }}"
+    fiveGhzSettings: "{{ profile.fiveGhzSettings | default(omit) }}"
+    sixGhzSettings: "{{ profile.sixGhzSettings | default(omit) }}"
+    transmission: "{{ profile.transmission | default(omit) }}"
+    flexRadios: "{{ profile.flexRadios | default(omit) }}"
+    perSsidSettings: "{{ profile.perSsidSettings | default(omit) }}"
+  loop: "{{ meraki_mr_configuration.rfProfiles }}"
   loop_control:
     loop_var: profile
   when: rf_profile_ids[profile.name] is defined and profile.state == "present"
 
 - name: Removing RF Profiles
-  cisco.meraki.meraki_mr_rf_profile:
-    auth_key: "{{ auth_key }}"
-    org_name: "{{ ap.organization }}"
-    net_name: "{{ ap.network }}"
+  cisco.meraki.networks_wireless_rf_profiles:
+    meraki_api_key: "{{ auth_key }}"
     state: "{{ profile.state }}"
-    profile_id: "{{ rf_profile_ids[profile.name].rf_profile_id }}"
-  loop: "{{ ap.rf_profiles }}"
+    networkId: "{{ network_id }}"
+    rfProfileId: "{{ rf_profile_ids[profile.name].id }}"
+  loop: "{{ meraki_mr_configuration.rfProfiles }}"
   loop_control:
     loop_var: profile
   when: rf_profile_ids[profile.name] is defined and profile.state == "absent"

@@ -1,24 +1,10 @@
 ---
 - name: Query for existing Camera Wireless Profiles
-  block:
-    - name: Query for existing Camera Wireless Profiles on Network {{ config.network }}
-      ansible.builtin.uri:
-        url: "{{ dashboard_base_url }}/networks/{{ network_id }}/camera/wirelessProfiles"
-        method: GET
-        status_code: 200
-        headers:
-          Content-Type: application/json
-          Accept: application/json
-          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
-      until: profile_result.status != 429
-      delay: 5
-      retries: 3
-      register: profile_result
-      when: config.camera_profiles is defined
-  rescue:
-    - name: Something went wrong...
-      ansible.builtin.debug:
-        msg: "ERROR: {{ profile_result }}"
+  cisco.meraki.networks_camera_wireless_profiles_info:
+    meraki_api_key: "{{ auth_key }}"
+    networkId: "{{ network_id }}"
+  register: profile_result
+  when: meraki_mv_configuration.camera_profiles.wireless is defined
 
 - name: Add discovered profiles to dict
   ansible.builtin.set_fact:
@@ -26,90 +12,49 @@
       {{ wireless_profile_ids | default({}) | combine(
         {
           result.name: {
-            "profile_id": result.id,
+            "id": result.id,
           }
         }
       ) }}
-  loop: "{{ profile_result.json }}"
+  loop: "{{ profile_result.meraki_response }}"
   loop_control:
     loop_var: result
-  when: profile_result.status == 200
+  when: profile_result is defined
 
-- name: Update Camera Wireless Profiles
-  block:
-    - name: Update Camera Wireless Profiles for Network {{ config.network }}
-      ansible.builtin.uri:
-        url: "{{ dashboard_base_url }}/networks/{{ network_id }}/camera/wirelessProfiles/{{ wireless_profile_ids[profile.name]['profile_id'] }}"
-        method: PUT
-        status_code: 200
-        headers:
-          Content-Type: application/json
-          Accept: application/json
-          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
-        body_format: json
-        body: "{{ lookup('template', 'templates/camera_wireless_profile.j2') }}"
-      changed_when: update_profile_result.status == 200
-      until: update_profile_result.status != 429
-      delay: 5
-      retries: 3
-      register: update_profile_result
-      when: wireless_profile_ids[profile.name] is defined and profile.state == "present"
-      loop: "{{ config.camera_profiles.wireless }}"
-      loop_control:
-        loop_var: profile
-  rescue:
-    - name: Something went wrong...
-      ansible.builtin.debug:
-        msg: "ERROR: {{ update_profile_result }}"
+- name: Create Camera Wireless Profiles for Network {{ meraki_mv_configuration.network.name }}
+  cisco.meraki.networks_camera_wireless_profiles:
+    meraki_api_key: "{{ auth_key }}"
+    state: "{{ profile.state }}"
+    name: "{{ profile.name }}"
+    networkId: "{{ network_id }}"
+    ssid: "{{ profile.ssid }}"
+    identity: "{{ profile.identity | default(omit) }}"
+  loop: "{{ meraki_mv_configuration.camera_profiles.wireless }}"
+  loop_control:
+    loop_var: profile
+  when: wireless_profile_ids[profile.name] is not defined and profile.state == "present"
 
-- name: Create Camera Wireless Profiles
-  block:
-    - name: Create Camera Wireless Profiles for Network {{ config.network }}
-      ansible.builtin.uri:
-        url: "{{ dashboard_base_url }}/networks/{{ network_id }}/camera/wirelessProfiles"
-        method: POST
-        status_code: 201
-        headers:
-          Content-Type: application/json
-          Accept: application/json
-          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
-        body_format: json
-        body: "{{ lookup('template', 'templates/camera_wireless_profile.j2') }}"
-      changed_when: create_profile_result.status == 201
-      until: create_profile_result.status != 429
-      delay: 5
-      retries: 3
-      register: create_profile_result
-      when: wireless_profile_ids[profile.name] is undefined and profile.state == "present"
-      loop: "{{ config.camera_profiles.wireless }}"
-      loop_control:
-        loop_var: profile
-  rescue:
-    - name: Something went wrong...
-      ansible.builtin.debug:
-        msg: "ERROR: {{ create_profile_result }}"
+- name: Update Camera Wireless Profiles for Network {{ meraki_mv_configuration.network.name }}
+  cisco.meraki.networks_camera_wireless_profiles:
+    meraki_api_key: "{{ auth_key }}"
+    state: "{{ profile.state }}"
+    name: "{{ profile.name }}"
+    networkId: "{{ network_id }}"
+    ssid: "{{ profile.ssid }}"
+    identity: "{{ profile.identity | default(omit) }}"
+    wirelessProfileId: "{{ wireless_profile_ids[profile.name].id }}"
+  loop: "{{ meraki_mv_configuration.camera_profiles.wireless }}"
+  loop_control:
+    loop_var: profile
+  when: wireless_profile_ids[profile.name] is defined and profile.state == "present"
 
-- name: Delete Camera Wireless Profiles
-  block:
-    - name: Delete Camera Wireless Profile on Network {{ config.network }}
-      ansible.builtin.uri:
-        url: "{{ dashboard_base_url }}/networks/{{ network_id }}/camera/wirelessProfiles/{{ wireless_profile_ids[profile.name]['profile_id'] }}"
-        method: DELETE
-        status_code: 204
-        headers:
-          Content-Type: application/json
-          Accept: application/json
-          X-Cisco-Meraki-API-Key: "{{ auth_key }}"
-      changed_when: delete_profile_result.status == 204
-      until: delete_profile_result.status != 429
-      delay: 5
-      retries: 3
-      register: delete_profile_result
-      when: wireless_profile_ids[profile.name] is defined and profile.state == "absent"
-      loop: "{{ config.camera_profiles.wireless }}"
-      loop_control:
-        loop_var: profile
-  rescue:
-    - name: Something went wrong...
-      ansible.builtin.debug:
-        msg: "ERROR: {{ delete_profile_result }}"
+- name: Delete Camera Wireless Profiles for Network {{ meraki_mv_configuration.network.name }}
+  cisco.meraki.networks_camera_wireless_profiles:
+    meraki_api_key: "{{ auth_key }}"
+    state: "{{ profile.state }}"
+    networkId: "{{ network_id }}"
+    wirelessProfileId: "{{ wireless_profile_ids[profile.name].id }}"
+  loop: "{{ meraki_mv_configuration.camera_profiles.wireless }}"
+  loop_control:
+    loop_var: profile
+  when: wireless_profile_ids[profile.name] is defined and profile.state == "absent"
