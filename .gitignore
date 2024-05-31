@@ -162,4 +162,4 @@ scratch/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-changelogs/.plugin_cache.yaml
+changelogs/.plugin-cache.yaml

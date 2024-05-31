@@ -2,9 +2,11 @@
 
 **Topics**
 
+- <a href="#v1-1-3">v1\.1\.3</a>
+    - <a href="#bugfixes">Bugfixes</a>
 - <a href="#v1-1-2">v1\.1\.2</a>
     - <a href="#breaking-changes--porting-guide">Breaking Changes / Porting Guide</a>
-    - <a href="#bugfixes">Bugfixes</a>
+    - <a href="#bugfixes-1">Bugfixes</a>
 - <a href="#v1-1-1">v1\.1\.1</a>
     - <a href="#minor-changes">Minor Changes</a>
     - <a href="#breaking-changes--porting-guide-1">Breaking Changes / Porting Guide</a>
@@ -12,6 +14,14 @@
     - <a href="#release-summary">Release Summary</a>
     - <a href="#new-plugins">New Plugins</a>
         - <a href="#lookup">Lookup</a>
+
+<a id="v1-1-3"></a>
+## v1\.1\.3
+
+<a id="bugfixes"></a>
+### Bugfixes
+
+* configure\_meraki\_mx \- Fixed VLAN provisioning to match requirements with cisco\.meraki collection version 2\.18\.1
 
 <a id="v1-1-2"></a>
 ## v1\.1\.2
@@ -21,7 +31,7 @@
 
 * manage\_meraki\_network \- updated data model so that tags are now a list
 
-<a id="bugfixes"></a>
+<a id="bugfixes-1"></a>
 ### Bugfixes
 
 * configure\_meraki\_mt \- fixed conditional preventing lookup dictionary creation

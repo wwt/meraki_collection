@@ -16,11 +16,6 @@
 
 #
 # First pass configuration throws the following errors when run
-# when vlanId parameter is omitted:
-# Error:  Appliance.getNetworkApplianceVlan() missing 1 required positional argument: 'vlanId'
-#
-# When vlanId parameter is present:
-# Error:  An error occured when executing operation.
 # The error was: appliance, getNetworkApplianceVlan - 404 Not Found, please wait a minute if the key or org was just newly created.
 #
 # VLANs are provisioned correctly regardless of error as noted above
@@ -32,7 +27,6 @@
     state: "{{ vlan.state }}"
     networkId: "{{ network_id }}"
     id: "{{ vlan.id }}"
-    vlanId: "{{ vlan.id }}"
     name: "{{ vlan.name | default(omit) }}"
     subnet: "{{ vlan.subnet | default(omit) }}"
     applianceIp: "{{ vlan.appliance_ip | default(omit) }}"
@@ -46,7 +40,7 @@
     meraki_api_key: "{{ auth_key }}"
     state: "{{ vlan.state }}"
     networkId: "{{ network_id }}"
-    vlanId: "{{ vlan.id }}"
+    id: "{{ vlan.id }}"
     name: "{{ vlan.name | default(omit) }}"
     reservedIpRanges: "{{ vlan.reserved_ip_range | default(omit) }}"
     fixedIpAssignments: "{{ vlan.fixed_ip_assignments | default(omit) }}"
@@ -66,7 +60,7 @@
     meraki_api_key: "{{ auth_key }}"
     state: "{{ vlan.state }}"
     networkId: "{{ network_id }}"
-    vlanId: "{{ vlan.id }}"
+    id: "{{ vlan.id }}"
     name: "{{ vlan.name | default(omit) }}"
     subnet: "{{ vlan.subnet | default(omit) }}"
     applianceIp: "{{ vlan.appliance_ip | default(omit) }}"
