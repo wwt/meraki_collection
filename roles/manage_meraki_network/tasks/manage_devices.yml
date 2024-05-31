@@ -46,7 +46,7 @@
 
 - name: Update Network Devices
   block:
-    - name: Add Location Information to Network Devices
+    - name: Add Name and Location Information to Network Devices
       ansible.builtin.uri:
         url: "{{ dashboard_base_url }}/devices/{{ device.serial }}"
         method: PUT
@@ -56,8 +56,10 @@
           X-Cisco-Meraki-API-Key: "{{ auth_key }}"
         body_format: json
         body:
+          name: "{{ device.name }}"
           address: "{{ network.address | default(omit) }}"
           moveMapMarker: "{{ 'true' if network.address | default(omit) }}"
+          tags: "{{ device.tags | default(omit) }}"
       changed_when: api_result.status == 200
       until: api_result.status != 429
       delay: 5

@@ -1,23 +1,52 @@
 ---
-- name: Initial Configuration of MX VLANs for {{ appliance.name }}
+- name: Query Existing MX VLANs
+  cisco.meraki.networks_appliance_vlans_info:
+    meraki_api_key: "{{ auth_key }}"
+    networkId: "{{ network_id }}"
+  register: vlan_result
+
+- name: Add discovered VLAN IDs to list
+  ansible.builtin.set_fact:
+    vlan_ids: >-
+      {{ vlan_ids | default([]) + [result.id] }}
+  loop: "{{ vlan_result.meraki_response }}"
+  loop_control:
+    loop_var: result
+  when: vlan_result is defined
+
+#
+# First pass configuration throws the following errors when run
+# when vlanId parameter is omitted:
+# Error:  Appliance.getNetworkApplianceVlan() missing 1 required positional argument: 'vlanId'
+#
+# When vlanId parameter is present:
+# Error:  An error occured when executing operation.
+# The error was: appliance, getNetworkApplianceVlan - 404 Not Found, please wait a minute if the key or org was just newly created.
+#
+# VLANs are provisioned correctly regardless of error as noted above
+#
+
+- name: First Pass Configuration of MX VLANs for {{ appliance.name }}
   cisco.meraki.networks_appliance_vlans:
     meraki_api_key: "{{ auth_key }}"
     state: "{{ vlan.state }}"
     networkId: "{{ network_id }}"
     id: "{{ vlan.id }}"
+    vlanId: "{{ vlan.id }}"
     name: "{{ vlan.name | default(omit) }}"
     subnet: "{{ vlan.subnet | default(omit) }}"
     applianceIp: "{{ vlan.appliance_ip | default(omit) }}"
   loop: "{{ appliance.vlans }}"
   loop_control:
     loop_var: vlan
+  when: vlan.id not in vlan_ids and vlan.state == "present"
 
 - name: Second Pass Configuration of MX VLANs for {{ appliance.name }}
   cisco.meraki.networks_appliance_vlans:
     meraki_api_key: "{{ auth_key }}"
     state: "{{ vlan.state }}"
     networkId: "{{ network_id }}"
-    id: "{{ vlan.id }}"
+    vlanId: "{{ vlan.id }}"
     name: "{{ vlan.name | default(omit) }}"
     reservedIpRanges: "{{ vlan.reserved_ip_range | default(omit) }}"
     fixedIpAssignments: "{{ vlan.fixed_ip_assignments | default(omit) }}"
@@ -29,4 +58,22 @@
     ((vlan.reserved_ip_range is defined) or
     (vlan.fixed_ip_assignments is defined) or
     (vlan.dns_nameservers is defined)) and
+    vlan.id not in vlan_ids and
     vlan.state == "present"
+
+- name: Update Configuration of Existing MX VLANs for {{ appliance.name }}
+  cisco.meraki.networks_appliance_vlans:
+    meraki_api_key: "{{ auth_key }}"
+    state: "{{ vlan.state }}"
+    networkId: "{{ network_id }}"
+    vlanId: "{{ vlan.id }}"
+    name: "{{ vlan.name | default(omit) }}"
+    subnet: "{{ vlan.subnet | default(omit) }}"
+    applianceIp: "{{ vlan.appliance_ip | default(omit) }}"
+    reservedIpRanges: "{{ vlan.reserved_ip_range | default(omit) }}"
+    fixedIpAssignments: "{{ vlan.fixed_ip_assignments | default(omit) }}"
+    dnsNameservers: "{{ vlan.dns_nameservers | default(omit) }}"
+  loop: "{{ appliance.vlans }}"
+  loop_control:
+    loop_var: vlan
+  when: vlan.id in vlan_ids and vlan.state == "present"

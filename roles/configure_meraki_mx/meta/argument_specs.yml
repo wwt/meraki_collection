@@ -530,42 +530,12 @@ argument_specs:
                         elements: dict
                         description: Layer 7 Firewall Rules
                         options:
-                          application:
-                            type: dict
-                            required: false
-                            description: Application to filter
-                            options:
-                              id:
-                                type: str
-                                required: false
-                                description: URI of application as defined by Meraki
-                              name:
-                                type: str
-                                required: false
-                                description: Name of application as defined by Meraki
-                          countries:
-                            type: list
-                            required: false
-                            description: List of countries - two leter ISO 3166-1 alpha-2
-                            elements: str
-                          host:
-                            type: str
-                            required: false
-                            description: FQDN of host to filter
-                          ipRange:
-                            type: str
-                            required: false
-                            description: CIDR range of IP, can append port with ":"
                           policy:
                             type: str
                             required: false
                             description: Policy to apply
                             choices:
                               - deny
-                          port:
-                            type: str
-                            required: false
-                            description: TCP or UDP port to filter
                           type:
                             type: str
                             required: false
@@ -578,3 +548,8 @@ argument_specs:
                               - ipRange
                               - port
                               - allowedCountries
+                          value:
+                            type: list
+                            elements: str
+                            required: false
+                            description: Rule Value
