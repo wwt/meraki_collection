@@ -13,15 +13,11 @@ on:
     - cron: '0 0 * * *'
 
 jobs:
-  changelog:
-    uses: ansible/ansible-content-actions/.github/workflows/changelog.yaml@main
-    if: github.event_name == 'pull_request'
   ansible-lint:
     uses: ansible/ansible-content-actions/.github/workflows/ansible_lint.yaml@main
   all_green:
     if: ${{ always() }}
     needs:
-      - changelog
       - ansible-lint
     runs-on: ubuntu-latest
     steps:
