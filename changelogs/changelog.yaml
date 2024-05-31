@@ -29,3 +29,16 @@ releases:
     - 1.1.0-update.yaml
     - 1.1.1-minor.yaml
     release_date: '2024-05-30'
+  1.1.2:
+    changes:
+      breaking_changes:
+      - manage_meraki_network - updated data model so that tags are now a list
+      bugfixes:
+      - configure_meraki_mt - fixed conditional preventing lookup dictionary creation
+      - configure_meraki_mx - fixed VLAN provisioning and updates due to VLAN 1 already
+        existing
+      - manage_meraki_network - fixed device provisioning to include name and tags
+    fragments:
+    - v1.1.2-breaking.yaml
+    - v1.1.2-bugfixes.yaml
+    release_date: '2024-05-31'

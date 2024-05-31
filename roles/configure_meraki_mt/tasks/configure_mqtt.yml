@@ -67,7 +67,7 @@
   loop: "{{ broker_result.results }}"
   loop_control:
     loop_var: result
-  when: not result.skipped
+  when: result.skipped is not defined
 
 - name: Enable MQTT Brokers
   cisco.meraki.networks_sensor_mqtt_brokers:

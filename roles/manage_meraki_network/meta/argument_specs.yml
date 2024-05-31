@@ -49,9 +49,10 @@ argument_specs:
               - present
               - absent
           tags:
-            type: str
+            type: list
+            elements: str
             required: false
-            description: Meraki Dashboard Tags (CSV list)
+            description: Meraki Dashboard Tags
           address:
             type: str
             required: false
